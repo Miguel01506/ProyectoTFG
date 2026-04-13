@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "album")]
@@ -13,12 +15,20 @@ class Album
     #[ORM\Column(name: "idAlbum", type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(name: "nombre", type: "string", length: 100)]
+    #[ORM\Column(type: "string", length: 100)]
     private ?string $nombre = null;
 
-    #[ORM\OneToOne(targetEntity: Viaje::class, cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: Viaje::class)]
     #[ORM\JoinColumn(name: "idViaje", referencedColumnName: "idViaje", nullable: false)]
     private ?Viaje $viaje = null;
+
+    #[ORM\OneToMany(mappedBy: "album", targetEntity: AlbumMedia::class)]
+    private Collection $albumMedia;
+
+    public function __construct()
+    {
+        $this->albumMedia = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -41,9 +51,14 @@ class Album
         return $this->viaje;
     }
 
-    public function setViaje(Viaje $viaje): self
+    public function setViaje(?Viaje $viaje): self
     {
         $this->viaje = $viaje;
         return $this;
+    }
+
+    public function getAlbumMedia(): Collection
+    {
+        return $this->albumMedia;
     }
 }

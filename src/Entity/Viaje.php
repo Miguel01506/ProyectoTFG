@@ -27,6 +27,22 @@ class Viaje
     #[ORM\Column(name: "fechaFin", type: "date", nullable: true)]
     private ?\DateTimeInterface $fechaFin = null;
 
+    #[ORM\OneToMany(mappedBy: "viaje", targetEntity: Gasto::class)]
+    private Collection $gastos;
+
+    #[ORM\OneToMany(mappedBy: "viaje", targetEntity: Participante::class)]
+    private Collection $participantes;
+
+    #[ORM\OneToMany(mappedBy: "viaje", targetEntity: Post::class)]
+    private Collection $posts;
+
+    public function __construct()
+    {
+        $this->gastos = new ArrayCollection();
+        $this->participantes = new ArrayCollection();
+        $this->posts = new ArrayCollection();
+    }
+
     public function getIdViaje(): ?int
     {
         return $this->idViaje;
@@ -74,5 +90,20 @@ class Viaje
     {
         $this->fechaFin = $fechaFin;
         return $this;
+    }
+
+    public function getGastos(): Collection
+    {
+        return $this->gastos;
+    }
+
+    public function getParticipantes(): Collection
+    {
+        return $this->participantes;
+    }
+
+    public function getPosts(): Collection
+    {
+        return $this->posts;
     }
 }

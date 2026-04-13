@@ -21,10 +21,10 @@ class Comentario
     #[ORM\JoinColumn(name: "idUsuario", referencedColumnName: "idUsuario", nullable: false)]
     private ?Usuario $usuario = null;
 
-    #[ORM\Column(type: string, length: 255, name: "contenido")]
+    #[ORM\Column(type: "string", length: 255, name: "texto")]
     private ?string $texto = null;
 
-    #[ORM\Column(type: datetime, options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[ORM\Column(name: "fechaComentario", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeInterface $fechaComentario = null;
 
     public function __construct()

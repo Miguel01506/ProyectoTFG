@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -12,191 +14,215 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer', name: 'idUsuario')]
-    private $idUsuario;
+    #[ORM\Column(name: 'idUsuario', type: 'integer')]
+    private ?int $idUsuario = null;
 
-    #[ORM\Column(type: 'string', length: 100, name: 'email')]
-    private $email;
+    #[ORM\Column(name: 'email', type: 'string', length: 100, unique: true)]
+    private ?string $email = null;
 
-    #[ORM\Column(type: 'string', length: 255, name: 'clave')]
-    private $clave;
+    #[ORM\Column(name: 'clave', type: 'string', length: 255)]
+    private ?string $clave = null;
 
-    #[ORM\Column(type: 'string', length: 100, name: 'nombreUsuario')]
-    private $nombreUsuario;
+    #[ORM\Column(name: 'nombreUsuario', type: 'string', length: 100)]
+    private ?string $nombreUsuario = null;
 
-    #[ORM\Column(type: 'string', length: 255, name: 'fotoPerfil', nullable: true)]
-    private $fotoPerfil;
+    #[ORM\Column(name: 'fotoPerfil', type: 'string', length: 255, nullable: true)]
+    private ?string $fotoPerfil = null;
 
-    #[ORM\Column(type: 'date', name: 'fechaNacimiento', nullable: true)]
-    private $fechaNacimiento;
+    #[ORM\Column(name: 'fechaNacimiento', type: 'date', nullable: true)]
+    private ?\DateTimeInterface $fechaNacimiento = null;
 
-    #[ORM\Column(type: 'string', length: 100, name: 'ciudad', nullable: true)]
-    private $ciudad;
+    #[ORM\Column(name: 'ciudad', type: 'string', length: 100, nullable: true)]
+    private ?string $ciudad = null;
 
-    #[ORM\Column(type: 'text', name: 'biografia', nullable: true)]
-    private $biografia;
+    #[ORM\Column(name: 'biografia', type: 'text', nullable: true)]
+    private ?string $biografia = null;
 
-    #[ORM\Column(type: 'string', columnDefinition: "ENUM('usuario','admin')", nullable: true, options: ['default' => 'usuario'], name: 'rol')]
-    private $rol;
+    #[ORM\Column(name: 'rol', type: 'string', columnDefinition: "ENUM('usuario','admin')", nullable: true, options: ['default' => 'usuario'])]
+    private ?string $rol = null;
 
-    #[ORM\Column(type: 'string', length: 255, name: 'token', nullable: true)]
-    private $token;
+    #[ORM\Column(name: 'token', type: 'string', length: 255, nullable: true)]
+    private ?string $token = null;
 
-    #[ORM\Column(type: 'datetime', name: 'token_expiracion', nullable: true)]
-    private $tokenExpiracion;
+    #[ORM\Column(name: 'tokenExpiracion', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $tokenExpiracion = null;
 
-    #[ORM\Column(type: 'boolean', name: 'activo', nullable: true, options: ['default' => 0])]
-    private $activo;
+    #[ORM\Column(name: 'activo', type: 'boolean', nullable: true, options: ['default' => 0])]
+    private ?bool $activo = null;
 
-    #[ORM\Column(type: 'datetime', name: 'fechaRegistro', nullable: true)]
-    private $fechaRegistro;
+    #[ORM\Column(name: 'fechaRegistro', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $fechaRegistro = null;
 
-    /* ID */
-    public function getIdUsuario()
+    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Comentario::class)]
+    private Collection $comentarios;
+
+    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Participante::class)]
+    private Collection $participaciones;
+
+    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Reaccion::class)]
+    private Collection $reacciones;
+
+    #[ORM\OneToMany(mappedBy: 'seguidor', targetEntity: Seguimiento::class)]
+    private Collection $siguiendo;
+
+    #[ORM\OneToMany(mappedBy: 'seguido', targetEntity: Seguimiento::class)]
+    private Collection $seguidores;
+
+    public function __construct()
+    {
+        $this->comentarios = new ArrayCollection();
+        $this->participaciones = new ArrayCollection();
+        $this->reacciones = new ArrayCollection();
+        $this->siguiendo = new ArrayCollection();
+        $this->seguidores = new ArrayCollection();
+        $this->fechaRegistro = new \DateTime();
+    }
+
+    public function getIdUsuario(): ?int
     {
         return $this->idUsuario;
     }
 
-    /* CORREO */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail($email)
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
     }
 
-    /* CLAVE */
-    public function getClave()
+    public function getClave(): ?string
     {
         return $this->clave;
     }
 
-    public function setClave($clave)
+    public function setClave(string $clave): self
     {
         $this->clave = $clave;
+        return $this;
     }
 
-    /* NOMBRE USUARIO */
-    public function getNombreUsuario()
+    public function getNombreUsuario(): ?string
     {
         return $this->nombreUsuario;
     }
 
-    public function setNombreUsuario($nombreUsuario)
+    public function setNombreUsuario(string $nombreUsuario): self
     {
         $this->nombreUsuario = $nombreUsuario;
+        return $this;
     }
 
-    /* FOTO PERFIL */
-    public function getFotoPerfil()
+    public function getFotoPerfil(): ?string
     {
         return $this->fotoPerfil;
     }
 
-    public function setFotoPerfil($fotoPerfil)
+    public function setFotoPerfil(?string $fotoPerfil): self
     {
         $this->fotoPerfil = $fotoPerfil;
+        return $this;
     }
 
-    /* FECHA NACIMIENTO */
-    public function getFechaNacimiento()
+    public function getFechaNacimiento(): ?\DateTimeInterface
     {
         return $this->fechaNacimiento;
     }
 
-    public function setFechaNacimiento($fechaNacimiento)
+    public function setFechaNacimiento(?\DateTimeInterface $fechaNacimiento): self
     {
         $this->fechaNacimiento = $fechaNacimiento;
+        return $this;
     }
 
-    /* CIUDAD */
-    public function getCiudad()
+    public function getCiudad(): ?string
     {
         return $this->ciudad;
     }
 
-    public function setCiudad($ciudad)
+    public function setCiudad(?string $ciudad): self
     {
         $this->ciudad = $ciudad;
+        return $this;
     }
 
-    /* BIOGRAFIA */
-    public function getBiografia()
+    public function getBiografia(): ?string
     {
         return $this->biografia;
     }
 
-    public function setBiografia($biografia)
+    public function setBiografia(?string $biografia): self
     {
         $this->biografia = $biografia;
+        return $this;
     }
 
-    /* ROL */
-    public function getRol()
+    public function getRol(): ?string
     {
         return $this->rol;
     }
 
-    public function setRol($rol)
+    public function setRol(?string $rol): self
     {
         $this->rol = $rol;
+        return $this;
     }
 
-    /* TOKEN */
-    public function getToken()
+    public function getToken(): ?string
     {
         return $this->token;
     }
 
-    public function setToken($token)
+    public function setToken(?string $token): self
     {
         $this->token = $token;
+        return $this;
     }
 
-    /* TOKEN EXPIRACION */
-    public function getTokenExpiracion()
+    public function getTokenExpiracion(): ?\DateTimeInterface
     {
         return $this->tokenExpiracion;
     }
 
-    public function setTokenExpiracion($tokenExpiracion)
+    public function setTokenExpiracion(?\DateTimeInterface $tokenExpiracion): self
     {
         $this->tokenExpiracion = $tokenExpiracion;
+        return $this;
     }
 
-    /* ACTIVO */
-    public function getActivo()
+    public function getActivo(): ?bool
     {
         return $this->activo;
     }
 
-    public function setActivo($activo)
+    public function setActivo(?bool $activo): self
     {
         $this->activo = $activo;
+        return $this;
     }
 
-    /* FECHA REGISTRO */
-    public function getFechaRegistro()
+    public function getFechaRegistro(): ?\DateTimeInterface
     {
         return $this->fechaRegistro;
     }
 
-    public function setFechaRegistro($fechaRegistro)
+    public function setFechaRegistro(?\DateTimeInterface $fechaRegistro): self
     {
         $this->fechaRegistro = $fechaRegistro;
+        return $this;
     }
 
-
-    
     public function getRoles(): array
     {
-        if ($this->getRol() == "admin")
-            return ['ROLE_ADMIN'];
-        else
-		return ['ROLE_USER']; 
+        $roles = [];
+        if ($this->rol === 'admin') {
+            $roles[] = 'ROLE_ADMIN';
+        }
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
     }
 
     public function getUserIdentifier(): string
@@ -211,7 +237,30 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        
     }
 
+    public function getComentarios(): Collection
+    {
+        return $this->comentarios;
+    }
+
+    public function getParticipaciones(): Collection
+    {
+        return $this->participaciones;
+    }
+
+    public function getReacciones(): Collection
+    {
+        return $this->reacciones;
+    }
+
+    public function getSiguiendo(): Collection
+    {
+        return $this->siguiendo;
+    }
+
+    public function getSeguidores(): Collection
+    {
+        return $this->seguidores;
+    }
 }

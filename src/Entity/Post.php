@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "post")]
@@ -27,8 +29,24 @@ class Post
     #[ORM\Column(name: "fechaPublicacion", type: "datetime")]
     private ?\DateTimeInterface $fechaPublicacion = null;
 
+    #[ORM\OneToMany(mappedBy: "post", targetEntity: Comentario::class)]
+    private Collection $comentarios;
+
+    #[ORM\OneToMany(mappedBy: "post", targetEntity: PostMedia::class)]
+    private Collection $postMedia;
+
+    #[ORM\OneToMany(mappedBy: "post", targetEntity: PostMencion::class)]
+    private Collection $menciones;
+
+    #[ORM\OneToMany(mappedBy: "post", targetEntity: Reaccion::class)]
+    private Collection $reacciones;
+
     public function __construct()
     {
+        $this->comentarios = new ArrayCollection();
+        $this->postMedia = new ArrayCollection();
+        $this->menciones = new ArrayCollection();
+        $this->reacciones = new ArrayCollection();
         $this->fechaPublicacion = new \DateTime();
     }
 
@@ -79,5 +97,25 @@ class Post
     {
         $this->fechaPublicacion = $fechaPublicacion;
         return $this;
+    }
+
+    public function getComentarios(): Collection
+    {
+        return $this->comentarios;
+    }
+
+    public function getPostMedia(): Collection
+    {
+        return $this->postMedia;
+    }
+
+    public function getMenciones(): Collection
+    {
+        return $this->menciones;
+    }
+
+    public function getReacciones(): Collection
+    {
+        return $this->reacciones;
     }
 }

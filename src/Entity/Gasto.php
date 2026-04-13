@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "gasto")]
@@ -21,23 +23,23 @@ class Gasto
     #[ORM\JoinColumn(name: "idUsuarioPagador", referencedColumnName: "idUsuario", nullable: false)]
     private ?Usuario $pagador = null;
 
-    #[ORM\Column(name: "descripcion", type: "string", length: 255, nullable: true)]
+    #[ORM\Column(name: "descripcion", type: "string", length: 100)]
     private ?string $descripcion = null;
 
-    // En PHP usamos float para que coincida con tu DOUBLE de la DB y acepte céntimos
     #[ORM\Column(name: "importeTotal", type: "float")]
     private ?float $importeTotal = null;
 
-    #[ORM\Column(name: "fecha", type: "date")]
-    private ?\DateTimeInterface $fecha = null;
+    #[ORM\Column(name: "fecha", type: "datetime")]
+    private ?\DateTimeInterface $fechaGasto = null;
+
+    #[ORM\OneToMany(mappedBy: "gasto", targetEntity: GastoParticipante::class)]
+    private Collection $participantes;
 
     public function __construct()
     {
-        // Al crear un "new Gasto()" se pone la fecha de hoy automáticamente
-        $this->fecha = new \DateTime();
+        $this->participantes = new ArrayCollection();
+        $this->fechaGasto = new \DateTime();
     }
-
-    // --- Getters y Setters ---
 
     public function getId(): ?int
     {
@@ -66,14 +68,14 @@ class Gasto
         return $this;
     }
 
-    public function getDescripcion(): ?string
+    public function getConcepto(): ?string
     {
-        return $this->descripcion;
+        return $this->concepto;
     }
 
-    public function setDescripcion(?string $descripcion): self
+    public function setConcepto(string $concepto): self
     {
-        $this->descripcion = $descripcion;
+        $this->concepto = $concepto;
         return $this;
     }
 
@@ -88,14 +90,19 @@ class Gasto
         return $this;
     }
 
-    public function getFecha(): ?\DateTimeInterface
+    public function getFechaGasto(): ?\DateTimeInterface
     {
-        return $this->fecha;
+        return $this->fechaGasto;
     }
 
-    public function setFecha(\DateTimeInterface $fecha): self
+    public function setFechaGasto(\DateTimeInterface $fechaGasto): self
     {
-        $this->fecha = $fecha;
+        $this->fechaGasto = $fechaGasto;
         return $this;
+    }
+
+    public function getParticipantes(): Collection
+    {
+        return $this->participantes;
     }
 }
