@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+{% block title %}Recuperar contraseña
+{% endblock %}
+{% block body %}
+    <h1>Recuperar contraseña</h1>
+	{% if error is defined %}
+		<div style="color: red">{{ error }}</div>
+	{% endif %}
+    
+	<form action="{{ path('ctrl_procesarecuperar') }}" method="post">
+
+		<label for="email">Email:</label><br>
+		<input type="text" id="email" name="email"/>
+		<br><br>
+		<button type="submit">Recuperar contraseña</button>
+	</form>
+{% endblock %}

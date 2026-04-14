@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+{% block title %}Cambiar contraseña
+{% endblock %}
+{% block body %}
+	{% if error is defined %}
+		<div style="color: red">{{ error }}</div>
+	{% endif %}
+	<form action="{{ path('ctrl_cambiarcontraseña') }}" method="post">
+
+		<input type="hidden" name="email" value="{{ email }}"/>
+
+		<label for="clave">Clave:</label><br>
+		<input type="password" id="clave" name="clave"/>
+		<br><br>
+
+		<label for="repetir_clave">Repetir clave:</label><br>
+		<input type="password" id="repetir_clave" name="repetir_clave"/>
+		<br><br>
+
+		<button type="submit">Cambiar contraseña</button>
+	</form>
+{% endblock %}

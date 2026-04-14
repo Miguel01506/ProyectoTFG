@@ -29,6 +29,12 @@ class RegistroController extends AbstractController
         $pass = $request->request->get('password');
         $pass2 = $request->request->get('password2');
 
+        if (empty($username) || empty($email) || empty($pass) || empty($pass2)) {
+            return $this->render('registro.html.twig', [
+                'error' => 'Todos los campos son obligatorios.',
+            ]);
+        }
+
         if ($pass !== $pass2) {
             return $this->render('registro.html.twig', [
                 'error' => 'Las contraseñas no coinciden.',
