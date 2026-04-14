@@ -15,6 +15,7 @@ security:
         main:
             lazy: true
             provider: agenciaVuelos_usuarios
+            user_checker: App\Security\UserChecker
             form_login:
                 login_path: ctrl_login
                 check_path: ctrl_login
@@ -22,3 +23,4 @@ security:
             logout:
                 path:   ctrl_logout
                 target: ctrl_login
+            
