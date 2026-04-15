@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+{% block title %}Viajes
+{% endblock %}
+{% block body %}
+	<h1>Viajes</h1>
+    {% if app.user %}
+        <p>Bienvenido, {{ app.user.nombreUsuario }}!</p>
+            <h2>Tus viajes:</h2>
+            {% for viaje in viajes %}
+                <div>
+                    <p>{{ viaje.nombre }}</p>
+                    <p>Destino: {{ viaje.destino }}</p>
+                    <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
+                    <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
+                    <p>Participantes: 
+                        {% for participante in participantes %}
+                            {{ participante.usuario.nombreUsuario }}{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            No hay participantes.
+                        {% endfor %}
+                </div>
+            {% else %}
+                <p>No tienes viajes registrados.</p>
+            {% endfor %}
+    {% else %}
+        <p>No estás logueado.</p>
+    {% endif %}
+{% endblock %}

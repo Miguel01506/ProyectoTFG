@@ -1,3 +1,28 @@
-<header>
-    
+{% block header %}
+<header class="site-header">
+    <div class="container">
+
+        <div>
+            <a href="{{ path('ctrl_home') }}">
+                <p><b>RedSocial</b></p>
+            </a>
+        </div>
+
+        {% if app.user %}
+        <nav>
+            <ul class="nav__list">
+                <li><a href="{{ path('ctrl_profile') }}">Perfil</a></li>
+            </ul>
+        </nav>
+        {% endif %}
+
+        <div>
+            {% if app.user %}
+                <a href="{{ path('ctrl_logout') }}">Cerrar sesión</a>
+            {% endif %}
+        </div>
+
+    </div>
+    <br>
 </header>
+{% endblock %}
