@@ -24,10 +24,15 @@ security:
                 path:   ctrl_logout
                 target: ctrl_login
     access_control:
+        # log in
         - { path: ^/login, roles: PUBLIC_ACCESS }
+
+        # cosas de registro
         - { path: ^/registro, roles: PUBLIC_ACCESS }
         - { path: ^/procesar_registro, roles: PUBLIC_ACCESS }
         - { path: ^/verificar_registro, roles: PUBLIC_ACCESS }
+
+        # cosas de recuperar contraseña
         - { path: ^/recuperarpass, roles: PUBLIC_ACCESS }
         - { path: ^/procesarecuperar, roles: PUBLIC_ACCESS }
         - { path: ^/verificar_cambiarcontraseña, roles: PUBLIC_ACCESS }

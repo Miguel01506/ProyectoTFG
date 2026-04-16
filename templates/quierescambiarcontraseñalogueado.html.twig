@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+{% block title %}Cambiar contraseña
+{% endblock %}
+{% block body %}
+	<h1>Cambiar contraseña</h1>
+	{% for mensaje in app.flashes('mensaje') %}
+		<div style="color: green;">
+			{{ mensaje }}
+		</div>
+	{% endfor %}
+	{% if error is defined %}
+		<div style="color: red">{{ error }}</div>
+	{% endif %}
+	¿Estás seguro de que quieres cambiar tu contraseña?
+	<form action="{{ path('ctrl_procesar_cambiarcontraseñalogueado') }}" method="post">
+		<input type="hidden" name="email" value="{{ email }}"/>
+		<button type="submit" style="background-color: green">Sí, quiero cambiar mi contraseña</button>
+	</form>
+	<form action="{{ path('ctrl_profile') }}">
+		<button type="submit" style="background-color: red">No, volver atrás</button>
+	</form>
+{% endblock %}
