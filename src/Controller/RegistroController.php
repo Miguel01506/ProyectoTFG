@@ -83,7 +83,7 @@ class RegistroController extends AbstractController
         $token = $entityManager->getRepository(Usuario::class)->findOneBy(['email' => $email])->getToken();
 
         $message = new Email();
-        $message->from(new Address('redsocial@example.com', "Nombre del remitente"));
+        $message->from(new Address('befly@gmail.com', "BeFly"));
         $message->to(new Address($email));
         $message->subject("Verificación de correo electrónico");
         $message->html("<h1>Hola $username!</h1>"

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+{% block title %}Cerrar cuenta
+{% endblock %}
+{% block body %}
+
+	<h1>Cerrar cuenta</h1>
+
+	{% if error is defined %}
+		<div style="color: red">{{ error }}</div>
+	{% endif %}
+
+	<form action="{{ path('ctrl_procesar_cerrarcuenta') }}" method="post">
+
+		<label for="email">Email:</label><br>
+		<input type="email" id="email" name="email"/>
+		<br><br>
+
+		<label for="clave">Clave:</label><br>
+		<input type="password" id="clave" name="clave"/>
+		<br><br>
+
+		<button type="submit">Cerrar cuenta</button>
+	</form>
+{% endblock %}

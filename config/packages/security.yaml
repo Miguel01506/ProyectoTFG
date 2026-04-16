@@ -23,4 +23,15 @@ security:
             logout:
                 path:   ctrl_logout
                 target: ctrl_login
+    access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/registro, roles: PUBLIC_ACCESS }
+        - { path: ^/procesar_registro, roles: PUBLIC_ACCESS }
+        - { path: ^/verificar_registro, roles: PUBLIC_ACCESS }
+        - { path: ^/recuperarpass, roles: PUBLIC_ACCESS }
+        - { path: ^/procesarecuperar, roles: PUBLIC_ACCESS }
+        - { path: ^/verificar_cambiarcontraseña, roles: PUBLIC_ACCESS }
+        - { path: ^/cambiarcontraseña, roles: PUBLIC_ACCESS }
+
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
             

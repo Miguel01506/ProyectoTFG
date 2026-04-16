@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+{% block title %}Confirmar Cerrar Cuenta
+{% endblock %}
+{% block body %}
+	<h1>Confirmar borrar cuenta</h1>
+	<br><br>
+	<h3>¿Estás seguro que quieres borrar tu cuenta?</h3>
+	<form action="{{ path('ctrl_borrarcuenta') }}" method="post">
+		<input type="hidden" name="email" value="{{ email }}"/>
+		<button type="submit" style="background-color: green">Sí, quiero borrar mi cuenta</button>
+	</form>
+	<form action="{{ path('ctrl_profile') }}">
+		<button type="submit" style="background-color: red">No, volver atrás</button>
+	</form>
+{% endblock %}

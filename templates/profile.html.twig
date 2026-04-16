@@ -3,22 +3,36 @@
 {% endblock %}
 {% block body %}
 	<h1>Perfil</h1>
-    {% if app.user %}
-        <p>Bienvenido, {{ app.user.nombreUsuario }}!</p>
-        <p>Email: {{ app.user.email }}</p>
-            <p>Seguidores: {{ numSeguidores }}</p>
-            <p>Siguiendo: {{ numSeguidos }}</p>
-            <h2>Tus publicaciones:</h2>
-            {% for post in posts %}
-                <div>
-                    <p>{{ post.texto }}</p>
-                    <p>Publicado el {{ post.fechaPublicacion|date('d/m/Y H:i') }}</p>
-                    <p>Comentarios: {{ numComentarios[post.id] }}</p>
-                </div>
-            {% else %}
-                <p>No has publicado nada aún.</p>
-            {% endfor %}
-    {% else %}
-        <p>No estás logueado.</p>
-    {% endif %}
+	{% for mensaje in app.flashes('mensaje') %}
+		<div style="color: green;">
+			{{ mensaje }}
+		</div>
+	{% endfor %}
+	{% if app.user %}
+		<p>Bienvenido,
+			{{ app.user.nombreUsuario }}!</p>
+		<p>Email:
+			{{ app.user.email }}</p>
+		<p>Seguidores:
+			{{ numSeguidores }}</p>
+		<p>Siguiendo:
+			{{ numSeguidos }}</p>
+		<h2>Tus publicaciones:</h2>
+		{% for post in posts %}
+			<div>
+				<p>{{ post.texto }}</p>
+				<p>Publicado el
+					{{ post.fechaPublicacion|date('d/m/Y H:i') }}</p>
+				<p>Comentarios:
+					{{ numComentarios[post.id] }}</p>
+			</div>
+		{% else %}
+			<p>No has publicado nada aún.</p>
+		{% endfor %}
+		<br>
+		<a href="{{ path('ctrl_cerrarcuenta') }}" style="color: red;">Elimina tu cuenta aquí</a>
+		<br>
+	{% else %}
+		<p>No estás logueado.</p>
+	{% endif %}
 {% endblock %}

@@ -11,8 +11,6 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'ctrl_home')]
     public function home()
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         return $this->render('home.html.twig');
     }
 }
