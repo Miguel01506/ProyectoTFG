@@ -5,19 +5,39 @@
 	<h1>Viajes</h1>
     {% if app.user %}
         <p>Bienvenido, {{ app.user.nombreUsuario }}!</p>
+            <h2>Crear un nuevo viaje:</h2>
+            <form action="{{ path('ctrl_crear_viaje') }}" method="post">
+                <label for="nombre">Nombre del viaje:</label>
+                <input type="text" id="nombre" name="nombre" required><br>
+
+                <label for="destino">Destino:</label>
+                <input type="text" id="destino" name="destino" required><br>
+
+                <label for="fechaInicio">Fecha de inicio:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" required><br>
+
+                <label for="fechaFin">Fecha de fin:</label>
+                <input type="date" id="fechaFin" name="fechaFin" required><br>
+
+                <button type="submit">Crear viaje</button>
+            </form>
+
             <h2>Tus viajes:</h2>
             {% for viaje in viajes %}
-                <div>
-                    <p>{{ viaje.nombre }}</p>
+                <div style="border: 1px solid #000000; padding: 10px; margin: 10px;">
+                    <h3>{{ viaje.nombre }}</h3>
                     <p>Destino: {{ viaje.destino }}</p>
                     <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
                     <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
                     <p>Participantes: 
                         {% for participante in participantes %}
-                            {{ participante.usuario.nombreUsuario }}{% if not loop.last %}, {% endif %}
+                            {% if participante.viaje.idViaje == viaje.idViaje %}
+                                {{ participante.usuario.nombreUsuario }}
+                            {% endif %}
                         {% else %}
                             No hay participantes.
                         {% endfor %}
+                    </p>
                 </div>
             {% else %}
                 <p>No tienes viajes registrados.</p>

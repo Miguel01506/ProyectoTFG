@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Participante;
 use App\Entity\Viaje;
@@ -43,4 +44,42 @@ class ViajesController extends AbstractController
             'participantes' => $participantes
         ]);
     }
+
+    #[Route(path: '/crearViaje', name: 'ctrl_crear_viaje')]
+    public function crearViaje(Request $request, EntityManagerInterface $em)
+    {
+        $nombre = $request->request->get('nombre');
+        $destino = $request->request->get('destino');
+        $fechaInicio = $request->request->get('fechaInicio');
+        $fechaFin = $request->request->get('fechaFin');
+
+        if (!$nombre || !$destino || !$fechaInicio || !$fechaFin) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        if (new \DateTime($fechaInicio) > new \DateTime($fechaFin)) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        if (new \DateTime($fechaInicio) < new \DateTime()) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+        
+        $viaje = new Viaje();
+        $viaje->setNombre($nombre);
+        $viaje->setDestino($destino);
+        $viaje->setFechaInicio(new \DateTime($fechaInicio));
+        $viaje->setFechaFin(new \DateTime($fechaFin));
+
+        $participante = new Participante();
+        $participante->setUsuario($this->getUser());
+        $participante->setViaje($viaje);
+
+        $em->persist($viaje);
+        $em->persist($participante);
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_viajes');
+    }
+
 }
