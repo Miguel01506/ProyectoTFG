@@ -1,12 +1,14 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Actividades;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Participante;
 use App\Entity\Viaje;
+use App\Entity\Album;
 
 class ViajesController extends AbstractController
 {
@@ -80,6 +82,37 @@ class ViajesController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('ctrl_viajes');
+    }
+
+    #[Route(path: '/detallesViaje/{id}', name: 'ctrl_detalles_viaje')]
+    public function detallesViaje(int $id, EntityManagerInterface $em)
+    {
+        $viaje = $em->getRepository(Viaje::class)->find($id);
+
+        if (!$viaje) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        $participantes = $em->getRepository(Participante::class)->findBy([
+            'viaje' => $viaje,
+        ]);
+
+        if (!$participantes) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        $actividades = $em->getRepository(Actividades::class)->findBy([
+            'viaje' => $viaje,
+        ]);
+
+        $album = $viaje->getAlbum();
+
+        return $this->render('detallesviaje.html.twig', [
+            'viaje' => $viaje,
+            'participantes' => $participantes,
+            'actividades' => $actividades,
+            'album' => $album
+        ]);
     }
 
 }

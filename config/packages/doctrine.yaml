@@ -13,7 +13,7 @@ doctrine:
         enable_lazy_ghost_objects: true
         report_fields_where_declared: true
         validate_xml_mapping: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        naming_strategy: doctrine.orm.naming_strategy.default
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
@@ -36,6 +36,7 @@ when@test:
 when@prod:
     doctrine:
         orm:
+            naming_strategy: doctrine.orm.naming_strategy.identity
             auto_generate_proxy_classes: false
             proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
             query_cache_driver:

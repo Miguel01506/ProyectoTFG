@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+{% block title %}Detalles del viaje
+{% endblock %}
+{% block body %}
+    <h1>{{ viaje.nombre }}</h1>
+    <p>Destino: {{ viaje.destino }}</p>
+    <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
+    <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
+
+    <h2>Participantes:</h2>
+    <ul>
+        {% for participante in participantes %}
+            {% if participante.viaje.idViaje == viaje.idViaje %}
+                <li>{{ participante.usuario.nombreUsuario }}</li>
+            {% endif %}
+        {% else %}
+            <li>No hay participantes.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Actividades:</h2>
+    <ul>
+        {% for actividad in actividades %}
+            {% if actividad.viaje.idViaje == viaje.idViaje %}
+                <li>{{ actividad.nombre }} - {{ actividad.descripcion }}</li>
+            {% endif %}
+        {% else %}
+            <li>No hay actividades registradas.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Album de fotos:</h2>
+    {# <a href="{{ path('ctrl_album_viaje', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a> #}
+
+    <a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
+{% endblock %}

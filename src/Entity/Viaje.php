@@ -36,11 +36,15 @@ class Viaje
     #[ORM\OneToMany(mappedBy: "viaje", targetEntity: Post::class)]
     private Collection $posts;
 
+    #[ORM\OneToMany(mappedBy: "viaje", targetEntity: Album::class)]
+    private Collection $album;
+
     public function __construct()
     {
         $this->gastos = new ArrayCollection();
         $this->participantes = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->album = new ArrayCollection();
     }
 
     public function getIdViaje(): ?int
@@ -105,5 +109,10 @@ class Viaje
     public function getPosts(): Collection
     {
         return $this->posts;
+    }
+
+    public function getAlbum(): Collection
+    {
+        return $this->album;
     }
 }

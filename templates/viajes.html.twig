@@ -24,21 +24,23 @@
 
             <h2>Tus viajes:</h2>
             {% for viaje in viajes %}
-                <div style="border: 1px solid #000000; padding: 10px; margin: 10px;">
-                    <h3>{{ viaje.nombre }}</h3>
-                    <p>Destino: {{ viaje.destino }}</p>
-                    <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
-                    <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
-                    <p>Participantes: 
-                        {% for participante in participantes %}
-                            {% if participante.viaje.idViaje == viaje.idViaje %}
-                                {{ participante.usuario.nombreUsuario }}
-                            {% endif %}
-                        {% else %}
-                            No hay participantes.
-                        {% endfor %}
-                    </p>
-                </div>
+                <a style="text-decoration: none;" href="{{ path('ctrl_detalles_viaje', {'id': viaje.idViaje}) }}">
+                    <div style="border: 1px solid #000000; padding: 10px; margin: 10px;">
+                        <h3>{{ viaje.nombre }}</h3>
+                        <p>Destino: {{ viaje.destino }}</p>
+                        <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
+                        <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
+                        <p>Participantes: 
+                            {% for participante in participantes %}
+                                {% if participante.viaje.idViaje == viaje.idViaje %}
+                                    {{ participante.usuario.nombreUsuario }}
+                                {% endif %}
+                            {% else %}
+                                No hay participantes.
+                            {% endfor %}
+                        </p>
+                    </div>
+                </a>
             {% else %}
                 <p>No tienes viajes registrados.</p>
             {% endfor %}
