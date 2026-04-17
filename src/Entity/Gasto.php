@@ -68,14 +68,14 @@ class Gasto
         return $this;
     }
 
-    public function getConcepto(): ?string
+    public function getDescripcion(): ?string
     {
-        return $this->concepto;
+        return $this->descripcion;
     }
 
-    public function setConcepto(string $concepto): self
+    public function setDescripcion(string $concepto): self
     {
-        $this->concepto = $concepto;
+        $this->descripcion = $concepto;
         return $this;
     }
 
