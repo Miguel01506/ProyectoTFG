@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+{% block title %}Detalles del viaje
+{% endblock %}
+{% block body %}
+    {% if error is defined and error is not empty %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <h1>Álbum de fotos del viaje: {{ album.viaje.nombre }}</h1>
+
+    <h2>Subir nuevo contenido al álbum:</h2>
+    <form action="{{ path('ctrl_subir_contenido', {'id': album.viaje.idViaje}) }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="archivos[]" multiple required>
+        <button type="submit">Subir</button>
+    </form>
+
+    <h2>Contenido del álbum:</h2>
+    <ul>
+        {% for media in contenidoAlbum %}
+            <div style="margin-bottom: 20px; display: inline-block;" >
+                {% if media.tipo == 'foto' %}
+                    <img src="{{ asset('uploads/' ~ media.rutaArchivo) }}" alt="Foto del viaje" style="max-width: 200px;">
+                {% elseif media.tipo == 'video' %}
+                    <video controls style="max-width: 400px;">
+                        <source src="{{ asset('uploads/' ~ media.rutaArchivo) }}" type="video/mp4">
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+                {% endif %}
+                <a href="{{ path('ctrl_eliminar_contenido', {'id': media.id}) }}" style="color: red; margin-left: 10px;">x</a>
+            </div>
+        {% else %}
+            <p>No hay contenido en el álbum.</p>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('ctrl_detalles_viaje', {'id': album.viaje.idViaje}) }}">Volver a los detalles del viaje</a>
+{% endblock %}

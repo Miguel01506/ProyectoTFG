@@ -77,8 +77,12 @@ class ViajesController extends AbstractController
         $participante->setUsuario($this->getUser());
         $participante->setViaje($viaje);
 
+        $album = new Album();
+        $album->setViaje($viaje);
+
         $em->persist($viaje);
         $em->persist($participante);
+        $em->persist($album);
         $em->flush();
 
         return $this->redirectToRoute('ctrl_viajes');

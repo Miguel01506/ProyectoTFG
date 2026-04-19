@@ -30,7 +30,7 @@
     </ul>
 
     <h2>Album de fotos:</h2>
-    {# <a href="{{ path('ctrl_album_viaje', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a> #}
+    <a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
 
     <a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
 {% endblock %}
