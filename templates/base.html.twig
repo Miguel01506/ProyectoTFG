@@ -1,18 +1,79 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>
-			{% block title %}{% endblock %}
-		</title>
-	</head>
-	<body>
-		<header>
-			{% include 'header.html.twig' %}
-		</header>
-		{% block body %}{% endblock %}
-		<footer>
-			{% block footer %}{% endblock %}
-		</footer>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - BeFly</title>
+    <style>
+        /* Estilos básicos para el layout tipo Instagram */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* El menú lateral (Aside) */
+        .sidebar {
+            width: 250px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dbdbdb;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 10px;
+            color: #262626;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background-color: #efefef;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            padding-left: 10px;
+        }
+
+        /* El contenido principal a la derecha */
+        .main-content {
+            margin-left: 250px; /* Deja espacio para el sidebar */
+            padding: 40px;
+            flex-grow: 1;
+            width: calc(100% - 250px);
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand-logo">
+            <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black; padding: 0;">BeFly</a>
+        </div>
+
+        {% if app.user %}
+            <a href="{{ path('ctrl_profile') }}">Perfil</a>
+            <a href="{{ path('ctrl_viajes') }}">Mis Viajes</a>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #dbdbdb;">
+            <a href="{{ path('ctrl_logout') }}" style="color: red;">Cerrar sesión</a>
+        {% else %}
+            <a href="{{ path('ctrl_login') }}">Iniciar Sesión</a>
+            <a href="{{ path('ctrl_registro') }}">Registrarse</a>
+        {% endif %}
+    </aside>
+
+    <main class="main-content">
+        {% block body %}{% endblock %}
+    </main>
+
+</body>
 </html>
