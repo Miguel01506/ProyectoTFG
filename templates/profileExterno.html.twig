@@ -1,0 +1,75 @@
+{% extends "base.html.twig" %}
+{% block title %}Perfil Externo
+{% endblock %}
+
+{% block body %}
+
+	{% if usuario %}
+		<h1>Perfil Externo</h1>
+
+		<h2>{{ usuario.nombreUsuario }}</h2>
+		<img src="{{ asset('img/' ~ usuario.fotoPerfil) }}" alt="foto" width="150">
+		<br>
+		Seguidores:
+		{{ numSeguidores }}
+		&emsp; Siguiendo:
+		{{ numSeguidos }}<br>
+
+		<ul>
+			{% if usuario.fechaNacimiento %}
+				<li>Fecha de nacimiento:
+					{{ usuario.fechaNacimiento|date('d-m-Y') }}</li>
+			{% endif %}
+
+			{% if usuario.ciudad %}
+				<li>Ciudad:
+					{{ usuario.ciudad }}</li>
+			{% endif %}
+
+			{% if usuario.biografia %}
+				<li>Biografía:
+					{{ usuario.biografia }}</li>
+			{% endif %}
+		</ul>
+
+		{# {% if posts is not empty %}
+			<h3>Posts</h3>
+			<hr>
+			{% for post in posts %}
+				<div>
+					<a href="{{ path('ctrl_profileExterno', {'id': post.usuario.idUsuario}) }}">
+						<img src="{{ asset('img/' ~ post.usuario.fotoPerfil) }}" width="25" height="25" style="border-radius:10px;">
+						<strong>{{ post.usuario.nombreUsuario }}</strong>
+					</a>:
+					{{ post.contenido }}
+					<br>
+					{% if post.imagen %}
+						<img src="{{ asset('uploads/posts/' ~ post.imagen) }}" width="150"><br>
+					{% endif %}
+					{% if post.archivo %}
+						<a href="{{ asset('uploads/posts/' ~ post.archivo) }}">{{ post.archivo }}</a><br>
+					{% endif %}
+					<br>
+					<a href="{{ path('ctrl_postDetalle', {'id': post.idPost}) }}">
+						Detalles Post
+					</a>
+					<br>
+					Comentarios:
+					{{ numComentarios[post.idPost] ?? 0 }}
+				</div>
+				<br>
+				Fecha de publicación:
+				{{ post.fechaPublicacion|date('d/m/Y H:i') }}<br>
+				<hr>
+			{% endfor %}
+		{% else %}
+			<p>Este usuario no ha publicado nada aún.</p>
+		{% endif %} #}
+
+	{% else %}
+		<div class="alert alert-danger">
+			{{ error }}
+		</div>
+	{% endif %}
+
+{% endblock %}
