@@ -1,0 +1,46 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Editar perfil
+{% endblock %}
+
+{% block body %}
+
+	<h1>Tu perfil</h1>
+	{% if error is defined %}
+		<nav style="color: red;">{{ error }}</nav>
+	{% endif %}
+	<img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto" width="150">
+	<br>
+
+	<form action="{{ path('ctrl_procesaEditarProfile') }}" method="POST" enctype="multipart/form-data">
+
+		<label>
+			Foto de perfil:<input type="file" name="fotoPerfil">
+		</label>
+		<br><br>
+
+		<label>
+			Fecha de nacimiento:<input type="date" name="fechaNac">
+		</label>
+		<br><br>
+
+		<label>
+			Ciudad:<input type="text" name="ciudad" value="{{ app.user.ciudad }}" placeholder="Madriz, Zevilla, Betih...">
+		</label>
+		<br><br>
+
+		<label>
+			Biografía:<input type="text" name="bio" value="{{ app.user.biografia }}" placeholder="Cuenta tu vida aquí...">
+		</label>
+		<br><br>
+
+		{% for mensaje in app.flashes('mensaje') %}
+			<div style="color: red;">
+				{{ mensaje }}
+			</div>
+		{% endfor %}
+
+		<button type="submit">Guardar cambios</button>
+	</form>
+
+{% endblock %}

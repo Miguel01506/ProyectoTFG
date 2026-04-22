@@ -42,10 +42,58 @@ class ProfileController extends AbstractController
         ]);
     }
 
+    #[Route('/editarProfile', name: 'ctrl_editarProfile')]
+    public function editar()
+    {
+        return $this->render('editarProfile.html.twig');
+    }
+
+    #[Route('/procesaEditarProfile', name: 'ctrl_procesaEditarProfile', methods: ['POST'])]
+    public function procesaEditar(Request $request, EntityManagerInterface $em)
+    {
+
+        $user = $this->getUser();
+
+        $fechaNac = $request->request->get('fechaNac');
+        $ciudad = $request->request->get('ciudad');
+        $bio = $request->request->get('bio');
+        $foto = $request->files->get('fotoPerfil');
+
+        if ($fechaNac) {
+            $newFecha = new \DateTime($fechaNac);
+            $user->setFechaNacimiento($newFecha);
+        }
+
+        if ($ciudad) {
+            $user->setCiudad($ciudad);
+        }
+
+        if ($bio) {
+            $user->setBiografia($bio);
+        }
+
+        if ($foto) {
+            $ext = strtolower($foto->guessExtension());
+
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+                $nombreArchivo = uniqid() . '.' . $ext;
+                $foto->move($this->getParameter('kernel.project_dir') . '/public/img', $nombreArchivo);
+                $user->setFotoPerfil($nombreArchivo);
+            } else {
+                $this->addFlash('mensaje', 'Tipo de archivo incorrecto. Solo se permiten los siguientes tipos: jpg, jpeg, png, gif.');
+                return $this->redirectToRoute('ctrl_editarProfile');
+            }
+        }
+
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_profile');
+    }
+
     #[Route('/busquedaUsuarios', name: 'ctrl_busquedaUsuarios')]
     public function busquedaUsuarios(EntityManagerInterface $em, Request $request)
     {
-        $username = $request->get('username');
+        $username = $request->request->get('username');
         $repo = $em->getRepository(Usuario::class);
 
         if (empty($username)) {

@@ -35,6 +35,7 @@
 					{{ app.user.biografia }}</li>
 			{% endif %}
 		</ul>
+		<a href="{{ path('ctrl_editarProfile') }}">Editar perfil</a>
 		<h2>Tus publicaciones:</h2>
 		{% for post in posts %}
 			<div>
