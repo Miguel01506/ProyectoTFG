@@ -1,0 +1,63 @@
+{% extends "base.html.twig" %}
+
+{% block title %}GASTOS DEL VIAJE{% endblock %}
+
+{% block body %}
+    <h1>GASTOS DE: {{ viaje.nombre|upper }}</h1>
+
+    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px;">
+        <h3>RESUMEN DEL GRUPO</h3>
+        <p>Total gastado: {{ totalGastos }} €</p>
+        <p>Toca pagar por persona: {{ mediaPorPersona }} €</p>
+    </div>
+
+    <h2>ESTADO DE LAS CUENTAS (BALANCES)</h2>
+    <ul>
+        {% for nombre, balance in balances %}
+            <li>
+                <b>{{ nombre }}</b>: 
+                {% if balance > 0 %}
+                    <span style="color: green;">Le deben {{ balance }} €</span>
+                {% elseif balance < 0 %}
+                    <span style="color: red;">Debe {{ balance|abs }} €</span>
+                {% else %}
+                    Está al día
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>LISTA DE TODOS LOS GASTOS</h2>
+    <ul>
+        {% for gasto in gastos %}
+            <li style="margin-bottom: 10px;">
+                <b>{{ gasto.descripcion }}</b>: {{ gasto.importeTotal }} € <br>
+                Pagado por: {{ gasto.pagador.nombreUsuario }}
+            </li>
+        {% else %}
+            <li>No hay gastos registrados.</li>
+        {% endfor %}
+    </ul>
+
+    <hr style="margin-top: 30px; margin-bottom: 20px;">
+    
+    <h2>AÑADIR UN NUEVO GASTO</h2>
+    <div style="border: 1px dashed #666; padding: 15px; margin-bottom: 20px; width: fit-content;">
+        <form action="{{ path('ctrl_nuevo_gasto', {'id': viaje.idViaje}) }}" method="POST">
+            <label for="descripcion">Concepto / Descripción:</label><br>
+            <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Cena en pizzería" required>
+            <br><br>
+
+            <label for="importeTotal">Importe Total (€):</label><br>
+            <input type="number" step="0.01" id="importeTotal" name="importeTotal" required>
+            <br><br>
+
+            <button type="submit" style="background-color: #0095f6; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer;">
+                Guardar Gasto
+            </button>
+        </form>
+    </div>
+
+    <br>
+    <a href="{{ path('ctrl_detalles_viaje', {'id': viaje.idViaje}) }}">Volver a los detalles del viaje</a>
+{% endblock %}

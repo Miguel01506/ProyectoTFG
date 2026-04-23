@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
 use App\Entity\Post;
 use App\Entity\Comentario;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends AbstractController
 {
@@ -34,6 +35,127 @@ class ProfileController extends AbstractController
         }
 
         return $this->render('profile.html.twig', [
+            'numSeguidores' => $numSeguidores,
+            'numSeguidos' => $numSeguidos,
+            'posts' => $posts,
+            'numComentarios' => $numComentarios
+        ]);
+    }
+
+    #[Route('/editarProfile', name: 'ctrl_editarProfile')]
+    public function editar()
+    {
+        return $this->render('editarProfile.html.twig');
+    }
+
+    #[Route('/procesaEditarProfile', name: 'ctrl_procesaEditarProfile', methods: ['POST'])]
+    public function procesaEditar(Request $request, EntityManagerInterface $em)
+    {
+
+        $user = $this->getUser();
+
+        $fechaNac = $request->request->get('fechaNac');
+        $ciudad = $request->request->get('ciudad');
+        $bio = $request->request->get('bio');
+        $foto = $request->files->get('fotoPerfil');
+
+        if ($fechaNac) {
+            $newFecha = new \DateTime($fechaNac);
+            $user->setFechaNacimiento($newFecha);
+        }
+
+        if ($ciudad) {
+            $user->setCiudad($ciudad);
+        }
+
+        if ($bio) {
+            $user->setBiografia($bio);
+        }
+
+        if ($foto) {
+            $ext = strtolower($foto->guessExtension());
+
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+                $nombreArchivo = uniqid() . '.' . $ext;
+                $foto->move($this->getParameter('kernel.project_dir') . '/public/img', $nombreArchivo);
+                $user->setFotoPerfil($nombreArchivo);
+            } else {
+                $this->addFlash('mensaje', 'Tipo de archivo incorrecto. Solo se permiten los siguientes tipos: jpg, jpeg, png, gif.');
+                return $this->redirectToRoute('ctrl_editarProfile');
+            }
+        }
+
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_profile');
+    }
+
+    #[Route('/busquedaUsuarios', name: 'ctrl_busquedaUsuarios')]
+    public function busquedaUsuarios(EntityManagerInterface $em, Request $request)
+    {
+        $username = $request->request->get('username');
+        $repo = $em->getRepository(Usuario::class);
+
+        if (empty($username)) {
+            $usuarios = $repo->findAll();
+        } else {
+            $usuarios = $repo->createQueryBuilder('u')
+                ->where('u.nombreUsuario LIKE :username')
+                ->setParameter('username', '%' . $username . '%')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this->render('busquedaUsuarios.html.twig', [
+            'username' => $username,
+            'usuarios' => $usuarios
+        ]);
+    }
+
+    #[Route('/profileExterno/{id}', name: 'ctrl_profileExterno')]
+    public function profileExterno(EntityManagerInterface $em, int $id)
+    {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->getUser()->getActivo() == false) {
+            return $this->render('registro.html.twig', [
+                'error' => 'Tu cuenta no ha sido activada. Por favor, revisa tu correo para activar tu cuenta.',
+            ]);
+        }
+
+        if ($id == $this->getUser()->getIdUsuario()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
+        $usuario = $em->getRepository(Usuario::class)->find($id);
+
+        if (!$usuario) {
+            return $this->render('profileExterno.html.twig', [
+                'error' => 'No se ha encontrado ningun usuario con este id',
+                'usuario' => null,
+                'numSeguidores' => 0,
+                'numSeguidos' => 0,
+            ]);
+        }
+        $numSeguidores = $em->getRepository(Seguimiento::class)->count([
+            'seguido' => $id,
+            'estado' => 'aceptado'
+        ]);
+
+        $numSeguidos = $em->getRepository(Seguimiento::class)->count([
+            'seguidor' => $id,
+            'estado' => 'aceptado'
+        ]);
+
+        $posts = $em->getRepository(Post::class)->findBy(['autor' => $usuario], ['fechaPublicacion' => 'DESC']);
+
+        $numComentarios = [];
+        foreach ($posts as $post) {
+            $numComentarios[$post->getIdPost()] = $em->getRepository(Comentario::class)->count(['post' => $post->getIdPost()]);
+        }
+
+        return $this->render('profileExterno.html.twig', [
+            'usuario' => $usuario,
             'numSeguidores' => $numSeguidores,
             'numSeguidos' => $numSeguidos,
             'posts' => $posts,

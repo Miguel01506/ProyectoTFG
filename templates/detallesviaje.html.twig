@@ -31,6 +31,17 @@
 
     <h2>Album de fotos:</h2>
     <a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
+    
+    <hr>
+    <h2>Gastos del Viaje (Tricount):</h2>
+    <p>Controla quién ha pagado qué y calcula las deudas automáticamente.</p>
+    
+    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+        <a href="{{ path('ctrl_gastos_viaje', {'id': viaje.idViaje}) }}" style="background-color: #0095f6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+            Gestionar Gastos
+        </a>
+    </div>
+    <hr>
 
     <a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
 {% endblock %}

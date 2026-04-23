@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+{% block title %}Usuarios
+{% endblock %}
+{% block body %}
+	<h1>Búsqueda de Usuarios</h1>
+
+	<form action="{{ path('ctrl_busquedaUsuarios')}}" method="POST">
+		<label>Introduce el nombre de usuario:</label>
+		<input type="text" name="username">
+	</form>
+
+	{% if usuarios is empty %}
+		<p>No se encontraron usuarios.</p>
+	{% else %}
+		{% for usuario in usuarios %}
+			<a href="{{ path('ctrl_profileExterno', {'id': usuario.idUsuario}) }}">
+				<div>
+					<img src="{{ asset('img/' ~ usuario.fotoPerfil) }}" width="50" height="50"><br>
+					{{ usuario.nombreUsuario }}
+				</div><br>
+			</a>
+		{% endfor %}
+	{% endif %}
+{% endblock %}

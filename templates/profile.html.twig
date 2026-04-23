@@ -2,12 +2,14 @@
 {% block title %}Login
 {% endblock %}
 {% block body %}
-	<h1>Perfil</h1>
 	{% for mensaje in app.flashes('mensaje') %}
 		<div style="color: green;">
 			{{ mensaje }}
 		</div>
 	{% endfor %}
+
+	<h1>Tu Perfil</h1>
+	<img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto" width="150">
 	{% if app.user %}
 		<p>Bienvenido,
 			{{ app.user.nombreUsuario }}!</p>
@@ -17,6 +19,23 @@
 			{{ numSeguidores }}</p>
 		<p>Siguiendo:
 			{{ numSeguidos }}</p>
+		<ul>
+			{% if app.user.fechaNacimiento %}
+				<li>Fecha de nacimiento:
+					{{ app.user.fechaNacimiento|date('d-m-Y') }}</li>
+			{% endif %}
+
+			{% if app.user.ciudad %}
+				<li>Ciudad:
+					{{ app.user.ciudad }}</li>
+			{% endif %}
+
+			{% if app.user.biografia %}
+				<li>Biografía:
+					{{ app.user.biografia }}</li>
+			{% endif %}
+		</ul>
+		<a href="{{ path('ctrl_editarProfile') }}">Editar perfil</a>
 		<h2>Tus publicaciones:</h2>
 		{% for post in posts %}
 			<div>
