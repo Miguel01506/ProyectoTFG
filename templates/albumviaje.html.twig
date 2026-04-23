@@ -2,9 +2,7 @@
 {% block title %}Detalles del viaje
 {% endblock %}
 {% block body %}
-    {% if error is defined and error is not empty %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    {% if album %}
     <h1>Álbum de fotos del viaje: {{ album.viaje.nombre }}</h1>
 
     <h2>Subir nuevo contenido al álbum:</h2>
@@ -33,4 +31,7 @@
     </ul>
 
     <a href="{{ path('ctrl_detalles_viaje', {'id': album.viaje.idViaje}) }}">Volver a los detalles del viaje</a>
+    {% else %}
+        <p>No se encontró un álbum para este viaje.</p>
+    {% endif %}
 {% endblock %}

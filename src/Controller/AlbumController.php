@@ -24,6 +24,24 @@ class AlbumController extends AbstractController
             'usuario' => $this->getUser(),
         ]);
 
+        if (!$album) {
+            return $this->render('albumviaje.html.twig', [
+                'album' => null,
+                'participanteActual' => $participanteActual,
+                'contenidoAlbum' => [],
+                'error' => 'Álbum no encontrado'
+            ]);
+        }
+
+        $esParticipante = $em->getRepository(Participante::class)->findOneBy([
+        'usuario' => $this->getUser()->getIdUsuario(),
+        'viaje'   => $id
+        ]);
+
+        if (!$esParticipante) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
         $medias = $em->createQuery('
             SELECT m
             FROM App\Entity\Media m
@@ -56,6 +74,15 @@ class AlbumController extends AbstractController
                 'error' => 'Álbum no encontrado'
             ]);
 
+        }
+
+        $esParticipante = $em->getRepository(Participante::class)->findOneBy([
+        'usuario' => $this->getUser()->getIdUsuario(),
+        'viaje'   => $id
+        ]);
+
+        if (!$esParticipante) {
+            return $this->redirectToRoute('ctrl_viajes');
         }
 
         $archivos = $request->files->get('archivos');

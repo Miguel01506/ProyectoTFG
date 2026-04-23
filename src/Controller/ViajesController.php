@@ -15,7 +15,6 @@ class ViajesController extends AbstractController
     #[Route(path: '/viajes', name: 'ctrl_viajes')]
     public function viajes(EntityManagerInterface $em)
     {
-    
         $participanteActual = $em->getRepository(Participante::class)->findOneBy([
             'usuario' => $this->getUser()->getIdUsuario(),
         ]);
@@ -91,7 +90,17 @@ class ViajesController extends AbstractController
     #[Route(path: '/detallesViaje/{id}', name: 'ctrl_detalles_viaje')]
     public function detallesViaje(int $id, EntityManagerInterface $em)
     {
+
         $viaje = $em->getRepository(Viaje::class)->find($id);
+
+        $esParticipante = $em->getRepository(Participante::class)->findOneBy([
+        'usuario' => $this->getUser()->getIdUsuario(),
+        'viaje'   => $viaje
+        ]);
+
+        if (!$esParticipante) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
 
         if (!$viaje) {
             return $this->redirectToRoute('ctrl_viajes');
@@ -100,10 +109,6 @@ class ViajesController extends AbstractController
         $participantes = $em->getRepository(Participante::class)->findBy([
             'viaje' => $viaje,
         ]);
-
-        if (!$participantes) {
-            return $this->redirectToRoute('ctrl_viajes');
-        }
 
         $actividades = $em->getRepository(Actividades::class)->findBy([
             'viaje' => $viaje,
