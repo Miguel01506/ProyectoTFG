@@ -124,4 +124,83 @@ class ViajesController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/agregarActividad/{id}', name: 'ctrl_agregar_actividad')]
+    public function agregarActividad(int $id, Request $request, EntityManagerInterface $em)
+    {
+        $viaje = $em->getRepository(Viaje::class)->find($id);
+
+        $esParticipante = $em->getRepository(Participante::class)->findOneBy([
+            'usuario' => $this->getUser()->getIdUsuario(),
+            'viaje'   => $viaje
+        ]);
+
+        if (!$esParticipante) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        if (!$viaje) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        $actividadNombre = $request->request->get('actividad');
+        $actividadDescripcion = $request->request->get('descripcion');
+
+        $actividadFechaInicio = $request->request->get('fecha');
+        $actividadFechaFin = $request->request->get('fechaFin');
+
+        $fechaInicioActividad = new \DateTime($actividadFechaInicio);
+        $fechaFinActividad = new \DateTime($actividadFechaFin);
+
+        if (!$actividadNombre || !$actividadFechaInicio || !$actividadFechaFin) {
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'missing_fields']);
+        }
+        if ($fechaInicioActividad > $fechaFinActividad) {
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'invalid_dates']);
+        }
+        if ($fechaInicioActividad < new \DateTime() || $fechaFinActividad < new \DateTime()) {
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
+        }
+        if ($fechaInicioActividad < $viaje->getFechaInicio() || $fechaFinActividad > $viaje->getFechaFin()) {
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'invalid_dates']);
+        }
+
+        $actividad = new Actividades();
+        $actividad->setNombre($actividadNombre);
+        $actividad->setDescripcion($actividadDescripcion);
+        $actividad->setFechaInicio($fechaInicioActividad);
+        $actividad->setFechaFin($fechaFinActividad);
+        $actividad->setViaje($viaje);
+
+        $em->persist($actividad);
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
+    }
+
+    #[Route(path: '/eliminarActividad/{id}', name: 'ctrl_eliminar_actividad')]
+    public function eliminarActividad(int $id, EntityManagerInterface $em)
+    {
+        $actividad = $em->getRepository(Actividades::class)->find($id);
+
+        if (!$actividad) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        $viaje = $actividad->getViaje();
+
+        $esParticipante = $em->getRepository(Participante::class)->findOneBy([
+            'usuario' => $this->getUser()->getIdUsuario(),
+            'viaje'   => $viaje
+        ]);
+
+        if (!$esParticipante) {
+            return $this->redirectToRoute('ctrl_viajes');
+        }
+
+        $em->remove($actividad);
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $viaje->getIdViaje()]);
+    }
+
 }

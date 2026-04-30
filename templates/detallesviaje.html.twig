@@ -19,16 +19,32 @@
     </ul>
 
     <h2>Actividades:</h2>
+    <form action="{{ path('ctrl_agregar_actividad', {'id': viaje.idViaje}) }}" method="post" style="margin-bottom: 20px;">
+        <label for="actividad">Agregar nueva actividad:</label>
+        <input type="text" name="actividad" placeholder="Nueva actividad"><br>
+        <label for="descripcion">Descripción:</label>
+        <input type="text" name="descripcion" placeholder="Descripción de la actividad"><br>
+        <label for="fecha">Fecha y hora:</label>
+        <input type=datetime-local name="fecha" placeholder="Fecha inicio">
+        <input type=datetime-local name="fechaFin" placeholder="Fecha fin"><br>
+        <button type="submit">Agregar</button>
+    </form>
     <ul>
-        {% for actividad in actividades %}
-            {% if actividad.viaje.idViaje == viaje.idViaje %}
-                <li>{{ actividad.nombre }} - {{ actividad.descripcion }}</li>
-            {% endif %}
-        {% else %}
-            <li>No hay actividades registradas.</li>
-        {% endfor %}
+    {% for actividad in actividades %}
+        {% if actividad.viaje.idViaje == viaje.idViaje %}
+            <li>
+                {{ actividad.nombre }}
+                {% if actividad.descripcion %}
+                    - {{ actividad.descripcion }}
+                {% endif %}
+                - {{ actividad.fechaInicio|date('d/m/Y H:i') }} - {{ actividad.fechaFin|date('d/m/Y H:i') }}
+                <a href="{{ path('ctrl_eliminar_actividad', {'id': actividad.idActividad}) }}" style="color: red; margin-left: 10px;">x</a>
+            </li>
+        {% endif %}
+    {% else %}
+        <li>No hay actividades registradas.</li>
+    {% endfor %}
     </ul>
-
     <h2>Album de fotos:</h2>
     <a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
     
