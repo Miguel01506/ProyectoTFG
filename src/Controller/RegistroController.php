@@ -18,12 +18,20 @@ class RegistroController extends AbstractController
     #[Route('/registro', name: 'ctrl_registro')]
     public function registro(MailerInterface $mailer, Request $request, EntityManagerInterface $entityManager)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         return $this->render('registro.html.twig');
     }
 
     #[Route('/procesar_registro', name: 'ctrl_procesar_registro')]
     public function procesarRegistro(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         $username = $request->request->get('username');
         $email = $request->request->get('email');
         $pass = $request->request->get('password');
@@ -99,6 +107,9 @@ class RegistroController extends AbstractController
     #[Route('/verificar_registro/{email}/{token}', name: 'ctrl_verificar_registro')]
     public function verificar_registro(MailerInterface $mailer, Request $request, EntityManagerInterface $entityManager, $email, $token)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
 
         $usu = $entityManager->getRepository(Usuario::class);
         $usuario = $usu->findOneBy(['email' => $email, 'token' => $token]);

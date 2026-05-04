@@ -11,6 +11,10 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'ctrl_login')]
     public function login(AuthenticationUtils $authUtils)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         // obtener último email ingresado
         $lastEmail = $authUtils->getLastUsername();
 
