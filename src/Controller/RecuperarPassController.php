@@ -15,12 +15,20 @@ class RecuperarPassController extends AbstractController
     #[Route('/recuperarpass', name: 'ctrl_recuperarpass')]
     public function recuperarcontraseña()
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         return $this->render('recuperarpass.html.twig');
     }
 
     #[Route('/procesarecuperar', name: 'ctrl_procesarecuperar')]
     public function procesarecuperar(MailerInterface $mailer, Request $request, EntityManagerInterface $em)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         $email = $request->request->get('email');
 
         $usuario = $em->getRepository(Usuario::class)->findOneBy(['email' => $email]);
@@ -57,6 +65,10 @@ class RecuperarPassController extends AbstractController
     #[Route('/verificar_cambiarcontraseña/{email}/{token}', name: 'ctrl_verificar_cambiarcontraseña')]
     public function verificar_cambiarcontraseña($email, $token, EntityManagerInterface $em)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         $usuario = $em->getRepository(Usuario::class)->findOneBy(['email' => $email]);
 
         if (!$usuario) {
@@ -85,6 +97,10 @@ class RecuperarPassController extends AbstractController
     #[Route('/cambiarcontraseña', name: 'ctrl_cambiarcontraseña')]
     public function cambiarcontraseña(Request $request, EntityManagerInterface $em)
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('ctrl_profile');
+        }
+
         $email = $request->request->get('email');
         $clave = $request->request->get('clave');
         $repetirClave = $request->request->get('repetir_clave');
