@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('logo.svg') }}">
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - BeFly</title>
     <style>
@@ -33,13 +34,6 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-        }
-
-        .sidebar .brand-logo {
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 30px;
-            padding-left: 10px;
         }
 
         .sidebar a {
@@ -77,16 +71,6 @@
             justify-content: space-between;
         }
 
-        .public-header .brand-logo {
-            font-size: 24px;
-            font-weight: 900;
-        }
-
-        .public-header .brand-logo a {
-            text-decoration: none;
-            color: #262626;
-        }
-
         .public-header nav a {
             color: #262626;
             text-decoration: none;
@@ -106,6 +90,18 @@
             flex-grow: 1;
             padding: 40px;
         }
+
+        .brand-logo svg {
+            width: 80px;
+            height: auto;
+            color: pink;
+        }
+
+        .brand-logo2 svg {
+            width: 60px;
+            height: auto;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -115,7 +111,9 @@
     {# Sidebar fuera del main, sólo estructura visual #}
     <aside class="sidebar">
         <div class="brand-logo">
-            <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black;">BeFly</a>
+            <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black;">
+                {{ include('icons/logo.svg') }}
+            </a>
         </div>
         <a href="{{ path('ctrl_home') }}">Inicio</a>
         <a href="{{ path('ctrl_profile') }}">Perfil</a>
@@ -127,8 +125,10 @@
 {% else %}
 
     <header class="public-header">
-        <div class="brand-logo">
-            <a href="{{ path('ctrl_home') }}">BeFly</a>
+        <div class="brand-logo2">
+            <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black;">
+                {{ include('icons/logo.svg') }}
+            </a>
         </div>
         <nav>
             <a href="{{ path('ctrl_login') }}">Iniciar sesión</a>
