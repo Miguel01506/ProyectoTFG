@@ -38,5 +38,6 @@ security:
         - { path: ^/verificar_cambiarcontraseña, roles: PUBLIC_ACCESS }
         - { path: ^/cambiarcontraseña, roles: PUBLIC_ACCESS }
 
+        # resto de rutas
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
             

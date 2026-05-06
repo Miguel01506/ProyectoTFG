@@ -55,16 +55,20 @@ class ViajesController extends AbstractController
         $fechaFin = $request->request->get('fechaFin');
 
         if (!$nombre || !$destino || !$fechaInicio || !$fechaFin) {
+            $this->addFlash('error', 'Todos los campos son obligatorios.');
             return $this->redirectToRoute('ctrl_viajes');
         }
 
         if (new \DateTime($fechaInicio) > new \DateTime($fechaFin)) {
+            $this->addFlash('error', 'La fecha de inicio debe ser anterior a la fecha de fin.');
             return $this->redirectToRoute('ctrl_viajes');
         }
 
-        if (new \DateTime($fechaInicio) < new \DateTime()) {
+        // lo dejo así comentado por si el llorón de miguel nos convence alguna vez de que esto tiene sentido
+        /* if (new \DateTime($fechaInicio) < new \DateTime()) {
+            $this->addFlash('error', 'La fecha de inicio no puede ser en el pasado.');
             return $this->redirectToRoute('ctrl_viajes');
-        }
+        } */
         
         $viaje = new Viaje();
         $viaje->setNombre($nombre);

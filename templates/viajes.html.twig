@@ -2,6 +2,11 @@
 {% block title %}Viajes
 {% endblock %}
 {% block body %}
+    {% for error in app.flashes('error') %}
+        <div style="color: red;">
+            {{ error }}
+        </div>
+    {% endfor %}
 	<h1>Viajes</h1>
     {% if app.user %}
         <p>Bienvenido, {{ app.user.nombreUsuario }}!</p>

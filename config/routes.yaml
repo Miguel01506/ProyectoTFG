@@ -9,3 +9,11 @@
 
 controllers:
     resource: routing.controllers
+# config/routes.yaml
+# pa que te lleve directo al login
+index:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults:
+        path: /login
+        permanent: true
