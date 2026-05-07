@@ -32,7 +32,7 @@
 			{% endif %}
 		</ul>
 
-		{# {% if posts is not empty %}
+		{% if posts is not empty %}
 			<h3>Posts</h3>
 			<hr>
 			{% for post in posts %}
@@ -63,8 +63,8 @@
 				<hr>
 			{% endfor %}
 		{% else %}
-			<p>Este usuario no ha publicado nada aún.</p>
-		{% endif %} #}
+			<p>Este usuario no ha publicado nada aún.</p><br>
+		{% endif %}
 
 	{% else %}
 		<div class="alert alert-danger">
