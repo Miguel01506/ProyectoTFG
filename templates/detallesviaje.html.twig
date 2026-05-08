@@ -2,62 +2,94 @@
 {% block title %}Detalles del viaje
 {% endblock %}
 {% block body %}
-    <h1>{{ viaje.nombre }}</h1>
-    <p>Destino: {{ viaje.destino }}</p>
-    <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
-    <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
 
-    <h2>Participantes:</h2>
-    <ul>
-        {% for participante in participantes %}
-            {% if participante.viaje.idViaje == viaje.idViaje %}
-                <li>{{ participante.usuario.nombreUsuario }}</li>
-            {% endif %}
-        {% else %}
-            <li>No hay participantes.</li>
-        {% endfor %}
-    </ul>
-
-    <h2>Actividades:</h2>
-    <form action="{{ path('ctrl_agregar_actividad', {'id': viaje.idViaje}) }}" method="post" style="margin-bottom: 20px;">
-        <label for="actividad">Agregar nueva actividad:</label>
-        <input type="text" name="actividad" placeholder="Nueva actividad"><br>
-        <label for="descripcion">Descripción:</label>
-        <input type="text" name="descripcion" placeholder="Descripción de la actividad"><br>
-        <label for="fecha">Fecha y hora:</label>
-        <input type=datetime-local name="fecha" placeholder="Fecha inicio">
-        <input type=datetime-local name="fechaFin" placeholder="Fecha fin"><br>
-        <button type="submit">Agregar</button>
-    </form>
-    <ul>
-    {% for actividad in actividades %}
-        {% if actividad.viaje.idViaje == viaje.idViaje %}
-            <li>
-                {{ actividad.nombre }}
-                {% if actividad.descripcion %}
-                    - {{ actividad.descripcion }}
-                {% endif %}
-                - {{ actividad.fechaInicio|date('d/m/Y H:i') }} - {{ actividad.fechaFin|date('d/m/Y H:i') }}
-                <a href="{{ path('ctrl_eliminar_actividad', {'id': actividad.idActividad}) }}" style="color: red; margin-left: 10px;">x</a>
-            </li>
-        {% endif %}
-    {% else %}
-        <li>No hay actividades registradas.</li>
-    {% endfor %}
-    </ul>
-    <h2>Album de fotos:</h2>
-    <a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
+	{% for error in app.flashes('error') %}
+		<div style="color: red;">
+			{{ error }}
+		</div>
+	{% endfor %}
+    {% for mensaje in app.flashes('mensaje') %}
+		<div style="color: green;">
+			{{ mensaje }}
+		</div>
+	{% endfor %}
     
-    <hr>
-    <h2>Gastos del Viaje (Tricount):</h2>
-    <p>Controla quién ha pagado qué y calcula las deudas automáticamente.</p>
-    
-    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-        <a href="{{ path('ctrl_gastos_viaje', {'id': viaje.idViaje}) }}" style="background-color: #0095f6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-            Gestionar Gastos
-        </a>
-    </div>
-    <hr>
+	<h1>{{ viaje.nombre }}</h1>
+	<p>Destino:
+		{{ viaje.destino }}</p>
+	<p>Fecha de inicio:
+		{{ viaje.fechaInicio|date('d/m/Y') }}</p>
+	<p>Fecha de fin:
+		{{ viaje.fechaFin|date('d/m/Y') }}</p>
 
-    <a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
+	<h2>Participantes:</h2>
+	<ul>
+		{% for participante in participantes %}
+			{% if participante.viaje.idViaje == viaje.idViaje %}
+				<li>{{ participante.usuario.nombreUsuario }}</li>
+			{% endif %}
+		{% else %}
+			<li>No hay participantes.</li>
+		{% endfor %}
+	</ul>
+
+	<h2>Actividades:</h2>
+	<form action="{{ path('ctrl_agregar_actividad', {'id': viaje.idViaje}) }}" method="post" style="margin-bottom: 20px;">
+		<label for="actividad">Agregar nueva actividad:</label>
+		<input type="text" name="actividad" placeholder="Nueva actividad"><br>
+		<label for="descripcion">Descripción:</label>
+		<input type="text" name="descripcion" placeholder="Descripción de la actividad"><br>
+		<label for="fecha">Fecha y hora:</label>
+		<input type="datetime-local" name="fecha" placeholder="Fecha inicio">
+		<input type="datetime-local" name="fechaFin" placeholder="Fecha fin"><br>
+		<button type="submit">Agregar</button>
+	</form>
+	<ul>
+		{% for actividad in actividades %}
+			{% if actividad.viaje.idViaje == viaje.idViaje %}
+				<li>
+					{{ actividad.nombre }}
+					{% if actividad.descripcion %}
+						-
+						{{ actividad.descripcion }}
+					{% endif %}
+					-
+					{{ actividad.fechaInicio|date('d/m/Y H:i') }}
+					-
+					{{ actividad.fechaFin|date('d/m/Y H:i') }}
+					<a href="{{ path('ctrl_eliminar_actividad', {'id': actividad.idActividad}) }}" style="color: red; margin-left: 10px;">x</a>
+				</li>
+			{% endif %}
+		{% else %}
+			<li>No hay actividades registradas.</li>
+		{% endfor %}
+	</ul>
+	<h2>Album de fotos:</h2>
+	<a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
+
+	<hr>
+	<h2>Gastos del Viaje (Tricount):</h2>
+	<p>Controla quién ha pagado qué y calcula las deudas automáticamente.</p>
+
+	<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+		<a href="{{ path('ctrl_gastos_viaje', {'id': viaje.idViaje}) }}" style="background-color: #0095f6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+			Gestionar Gastos
+		</a>
+	</div>
+	<hr>
+
+	<h2>Publicar post sobre el viaje:</h2>
+	<form action="{{ path('ctrl_addPost', {'idViaje': viaje.idViaje}) }}" method="POST" enctype="multipart/form-data">
+		<textarea name="contenido" required placeholder="'Guillermo no hace nada'"></textarea><br>
+		<i>
+			<small>Máximo 5 archivos</small>
+		</i>
+		<input type="file" name="files[]" id="filesInput" multiple><br>
+		<div id="mensaje"></div>
+		<button type="submit">Publicar</button>
+	</form><br>
+
+	<a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
+
+	<script src="{{ asset('controllers/fileLimit.js') }}" defer></script>
 {% endblock %}
