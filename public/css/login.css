@@ -1,0 +1,162 @@
+/* ── Layout principal ── */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Panel izquierdo ── */
+.left-container {
+  flex: 1;
+  background-image: url('/fondoHojas.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#firefly-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.logo {
+  text-align: center;
+  color: #FFF8EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo svg {
+  width: 100px;
+  height: 100px;
+}
+
+.logo span {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ── Panel derecho ── */
+.right-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #FFF8EC;
+}
+
+/* ── Tarjeta de login ── */
+.card-login {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-login h1 {
+  font-size: 35px;
+  font-weight: 500;
+  color: #546B41;
+  margin: 0 0 1.75rem;
+  text-align: center;
+}
+
+.card-login label {
+  font-size: 13px;
+  color: #2d6a4f;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.card-login input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 16px;
+  font-size: 16px;
+  border: 1.5px solid #546B41;
+  border-radius: 10px;
+  background: #98ad7a80;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-login input:focus {
+  border-color: #546B41;
+  box-shadow: 0 0 0 3px rgba(84, 107, 65, 0.15);
+}
+
+.card-login button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  background: #99AD7A;
+  color: #FFF8EC;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.card-login button[type="submit"]:hover {
+  background: #546B41;
+}
+
+.card-login a {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  color: #99AD7A;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.card-login a:hover {
+  text-decoration: underline;
+  color: #546B41;
+}
+
+/* ── Mensajes de error / éxito ── */
+.container ~ div,
+div[style*="color: red"],
+div[style*="color: green"] {
+  text-align: center;
+  font-size: 13px;
+  padding: 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .left-container {
+    min-height: 200px;
+    flex: none;
+  }
+
+  .right-container {
+    flex: 1;
+    padding: 2rem 1.5rem;
+  }
+}

@@ -4,6 +4,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('logo.svg') }}">
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - BeFly</title>
+    {% block stylesheets %}{% endblock %}
     <style>
         * {
             box-sizing: border-box;
@@ -86,21 +87,10 @@
             width: calc(100% - 250px);
         }
 
-        .main-content-public {
-            flex-grow: 1;
-            padding: 40px;
-        }
-
         .brand-logo svg {
             width: 80px;
             height: auto;
             color: pink;
-        }
-
-        .brand-logo2 svg {
-            width: 60px;
-            height: auto;
-            color: red;
         }
     </style>
 </head>
@@ -108,7 +98,6 @@
 
 {% if app.user %}
 
-    {# Sidebar fuera del main, sólo estructura visual #}
     <aside class="sidebar">
         <div class="brand-logo">
             <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black;">
@@ -122,24 +111,9 @@
         <a href="{{ path('ctrl_logout') }}" class="logout-link">Cerrar sesión</a>
     </aside>
 
-{% else %}
-
-    <header class="public-header">
-        <div class="brand-logo2">
-            <a href="{{ path('ctrl_home') }}" style="text-decoration: none; color: black;">
-                {{ include('icons/logo.svg') }}
-            </a>
-        </div>
-        <nav>
-            <a href="{{ path('ctrl_login') }}">Iniciar sesión</a>
-            <a href="{{ path('ctrl_registro') }}">Registrarse</a>
-        </nav>
-    </header>
-
 {% endif %}
 
-{# ── Un único bloque body, fuera del if ── #}
-<main class="{{ app.user ? 'main-content-auth' : 'main-content-public' }}">
+<main class="{{ app.user ? 'main-content-auth' : '' }}">
     {% block body %}{% endblock %}
 </main>
 
