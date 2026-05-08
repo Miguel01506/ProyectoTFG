@@ -1,0 +1,159 @@
+/* ── CONTENEDOR DE SECCIÓN ── */
+.viajes-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    padding: 60px 40px;
+    background-image: radial-gradient(var(--color-verde-transparente) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* ── CABECERA EDITORIAL ── */
+.titulo-principal {
+    font-family: var(--fuente-titulos);
+    font-size: 48px;
+    color: var(--color-verde-oscuro);
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+.titulo-principal::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-verde-claro);
+    margin-top: 10px;
+}
+
+.texto-bienvenida {
+    margin-top: 20px;
+    margin-bottom: 50px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #777;
+}
+
+/* ── FORMULARIO DE CREACIÓN ── */
+.form-crear-viaje {
+    background: var(--blanco);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 60px;
+    box-shadow: 0 15px 35px rgba(84, 107, 65, 0.05);
+}
+
+.subtitulo-seccion {
+    font-family: var(--fuente-titulos);
+    font-size: 26px;
+    color: var(--color-verde-oscuro);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+.form-crear-viaje label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-verde-oscuro);
+    margin-bottom: 8px;
+    margin-top: 20px;
+}
+
+.form-crear-viaje input {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid var(--color-crema);
+    background-color: var(--color-crema);
+    border-radius: 12px;
+    font-family: var(--fuente-cuerpo);
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-crear-viaje input:focus {
+    outline: none;
+    border-color: var(--color-verde-claro);
+    background-color: var(--blanco);
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.btn-crear {
+    width: 100%;
+    background-color: var(--color-verde-oscuro);
+    color: var(--blanco);
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-crear:hover {
+    background-color: var(--color-verde-claro);
+    transform: translateY(-2px);
+}
+
+/* ── GRID DE VIAJES ── */
+.viajes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.viaje-card {
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+    border-top: 5px solid var(--color-verde-claro);
+}
+
+.viaje-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(84, 107, 65, 0.1);
+}
+
+.viaje-card h3 {
+    font-family: var(--fuente-titulos);
+    font-size: 24px;
+    color: var(--color-verde-oscuro);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.viaje-card p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #555;
+}
+
+.viaje-card strong {
+    color: var(--color-verde-oscuro);
+}
+
+.mensaje-vacio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    background: var(--blanco);
+    border-radius: 15px;
+    border: 2px dashed var(--color-beige);
+    color: #888;
+}

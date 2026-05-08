@@ -1,0 +1,93 @@
+/* ── FUENTES Y VARIABLES ── */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+    --color-verde-oscuro: #546B41;
+    --color-verde-claro: #94a773;
+    --color-verde-transparente: #94a77320;
+    --color-beige: #dfcdb3;
+    --color-crema: #fbf6ef;
+    --color-fondo-pagina: #FFF8EC;
+    --blanco: #ffffff;
+    --texto-principal: #1a1a1a;
+    --fuente-titulos: 'Playfair Display', serif;
+    --fuente-cuerpo: 'Montserrat', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--fuente-cuerpo);
+    background-color: var(--color-fondo-pagina);
+    color: var(--texto-principal);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* ── SIDEBAR (MENÚ LATERAL) ── */
+.sidebar {
+    width: 250px;
+    background-color: var(--blanco);
+    border-right: 1.5px solid var(--color-verde-claro);
+    padding: 30px 20px;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.brand-logo {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.brand-logo a {
+    font-family: var(--fuente-titulos);
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--color-verde-oscuro);
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.sidebar-links a {
+    display: block;
+    padding: 14px 15px;
+    color: var(--color-verde-oscuro);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-links a:hover {
+    background-color: var(--color-verde-claro);
+    color: var(--blanco);
+    padding-left: 20px;
+}
+
+.sidebar-divider {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1.5px solid var(--color-verde-transparente);
+}
+
+.logout-link {
+    color: #d9534f !important;
+    margin-top: auto;
+}
+
+/* ── LAYOUT PRINCIPAL ── */
+.main-content {
+    margin-left: 250px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}

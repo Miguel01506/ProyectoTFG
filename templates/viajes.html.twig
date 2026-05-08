@@ -1,55 +1,73 @@
 {% extends "base.html.twig" %}
-{% block title %}Viajes
+
+{% block title %}MIS VIAJES{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/viajes.css') }}">
 {% endblock %}
+
 {% block body %}
-    {% for error in app.flashes('error') %}
-        <div style="color: red;">
-            {{ error }}
-        </div>
-    {% endfor %}
-	<h1>Viajes</h1>
-    {% if app.user %}
-        <p>Bienvenido, {{ app.user.nombreUsuario }}!</p>
-            <h2>Crear un nuevo viaje:</h2>
-            <form action="{{ path('ctrl_crear_viaje') }}" method="post">
-                <label for="nombre">Nombre del viaje:</label>
-                <input type="text" id="nombre" name="nombre" required><br>
+    <div class="viajes-wrapper">
+        
+        <header>
+            <h1 class="titulo-principal">VIAJES</h1>
+            <p class="texto-bienvenida">Panel de gestión de itinerarios para <strong>{{ app.user.nombreUsuario }}</strong></p>
+        </header>
+        
+        {% if app.user %}
+            <section class="section-crear">
+                <div class="form-crear-viaje">
+                    <h2 class="subtitulo-seccion">Nuevo Itinerario</h2>
+                    <form action="{{ path('ctrl_crear_viaje') }}" method="post">
+                        <label for="nombre">Nombre del Viaje</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Ejemplo: Ruta por el Norte" required>
 
-                <label for="destino">Destino:</label>
-                <input type="text" id="destino" name="destino" required><br>
+                        <label for="destino">Destino Principal</label>
+                        <input type="text" id="destino" name="destino" placeholder="Ejemplo: Asturias" required>
 
-                <label for="fechaInicio">Fecha de inicio:</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" required><br>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fechaInicio">Fecha de Inicio</label>
+                                <input type="date" id="fechaInicio" name="fechaInicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fechaFin">Fecha de Finalización</label>
+                                <input type="date" id="fechaFin" name="fechaFin" required>
+                            </div>
+                        </div>
 
-                <label for="fechaFin">Fecha de fin:</label>
-                <input type="date" id="fechaFin" name="fechaFin" required><br>
+                        <button type="submit" class="btn-crear">REGISTRAR VIAJE</button>
+                    </form>
+                </div>
+            </section>
 
-                <button type="submit">Crear viaje</button>
-            </form>
-
-            <h2>Tus viajes:</h2>
-            {% for viaje in viajes %}
-                <a style="text-decoration: none;" href="{{ path('ctrl_detalles_viaje', {'id': viaje.idViaje}) }}">
-                    <div style="border: 1px solid #000000; padding: 10px; margin: 10px;">
-                        <h3>{{ viaje.nombre }}</h3>
-                        <p>Destino: {{ viaje.destino }}</p>
-                        <p>Fecha de inicio: {{ viaje.fechaInicio|date('d/m/Y') }}</p>
-                        <p>Fecha de fin: {{ viaje.fechaFin|date('d/m/Y') }}</p>
-                        <p>Participantes: 
-                            {% for participante in participantes %}
-                                {% if participante.viaje.idViaje == viaje.idViaje %}
-                                    {{ participante.usuario.nombreUsuario }}
-                                {% endif %}
-                            {% else %}
-                                No hay participantes.
-                            {% endfor %}
-                        </p>
-                    </div>
-                </a>
-            {% else %}
-                <p>No tienes viajes registrados.</p>
-            {% endfor %}
-    {% else %}
-        <p>No estás logueado.</p>
-    {% endif %}
+            <section class="section-lista">
+                <h2 class="subtitulo-seccion">Tus Viajes Activos</h2>
+                <div class="viajes-grid">
+                    {% for viaje in viajes %}
+                        <a href="{{ path('ctrl_detalles_viaje', {'id': viaje.idViaje}) }}" class="viaje-card">
+                            <h3>{{ viaje.nombre }}</h3>
+                            <p><strong>Destino:</strong> {{ viaje.destino }}</p>
+                            <p><strong>Fechas:</strong> {{ viaje.fechaInicio|date('d/m/Y') }} - {{ viaje.fechaFin|date('d/m/Y') }}</p>
+                            <p><strong>Participantes:</strong> 
+                                {% for participante in participantes %}
+                                    {% if participante.viaje.idViaje == viaje.idViaje %}
+                                        {{ participante.usuario.nombreUsuario }}{% if not loop.last %}, {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    Sin participantes registrados
+                                {% endfor %}
+                            </p>
+                        </a>
+                    {% else %}
+                        <div class="mensaje-vacio">
+                            No se han encontrado viajes activos en su cuenta.
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <p>Debe iniciar sesión para gestionar sus viajes.</p>
+        {% endif %}
+    </div>
 {% endblock %}
