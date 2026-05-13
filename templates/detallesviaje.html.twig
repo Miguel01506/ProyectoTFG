@@ -1,95 +1,259 @@
 {% extends "base.html.twig" %}
-{% block title %}Detalles del viaje
+{% block title %}{{ viaje.nombre }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/detalles.css') }}">
 {% endblock %}
+
 {% block body %}
+<div class="viaje-wrapper">
 
-	{% for error in app.flashes('error') %}
-		<div style="color: red;">
-			{{ error }}
-		</div>
-	{% endfor %}
+    {% for error in app.flashes('error') %}
+        <div class="flash-error">{{ error }}</div>
+    {% endfor %}
     {% for mensaje in app.flashes('mensaje') %}
-		<div style="color: green;">
-			{{ mensaje }}
-		</div>
-	{% endfor %}
-    
-	<h1>{{ viaje.nombre }}</h1>
-	<p>Destino:
-		{{ viaje.destino }}</p>
-	<p>Fecha de inicio:
-		{{ viaje.fechaInicio|date('d/m/Y') }}</p>
-	<p>Fecha de fin:
-		{{ viaje.fechaFin|date('d/m/Y') }}</p>
+        <div class="flash-mensaje">{{ mensaje }}</div>
+    {% endfor %}
 
-	<h2>Participantes:</h2>
-	<ul>
-		{% for participante in participantes %}
-			{% if participante.viaje.idViaje == viaje.idViaje %}
-				<li>{{ participante.usuario.nombreUsuario }}</li>
-			{% endif %}
-		{% else %}
-			<li>No hay participantes.</li>
-		{% endfor %}
-	</ul>
+    <div class="viaje-hero">
+        <div class="viaje-hero-content">
+            <h2>{{ viaje.nombre }}</h2>
+            <p>Destino: {{ viaje.destino }}</p>
+            <p>Fecha: {{ viaje.fechaInicio|date('d/m/Y') }} - {{ viaje.fechaFin|date('d/m/Y') }}</p>
+        </div>
+    </div>
 
-	<h2>Actividades:</h2>
-	<form action="{{ path('ctrl_agregar_actividad', {'id': viaje.idViaje}) }}" method="post" style="margin-bottom: 20px;">
-		<label for="actividad">Agregar nueva actividad:</label>
-		<input type="text" name="actividad" placeholder="Nueva actividad"><br>
-		<label for="descripcion">Descripción:</label>
-		<input type="text" name="descripcion" placeholder="Descripción de la actividad"><br>
-		<label for="fecha">Fecha y hora:</label>
-		<input type="datetime-local" name="fecha" placeholder="Fecha inicio">
-		<input type="datetime-local" name="fechaFin" placeholder="Fecha fin"><br>
-		<button type="submit">Agregar</button>
-	</form>
-	<ul>
-		{% for actividad in actividades %}
-			{% if actividad.viaje.idViaje == viaje.idViaje %}
-				<li>
-					{{ actividad.nombre }}
-					{% if actividad.descripcion %}
-						-
-						{{ actividad.descripcion }}
-					{% endif %}
-					-
-					{{ actividad.fechaInicio|date('d/m/Y H:i') }}
-					-
-					{{ actividad.fechaFin|date('d/m/Y H:i') }}
-					<a href="{{ path('ctrl_eliminar_actividad', {'id': actividad.idActividad}) }}" style="color: red; margin-left: 10px;">x</a>
-				</li>
-			{% endif %}
-		{% else %}
-			<li>No hay actividades registradas.</li>
-		{% endfor %}
-	</ul>
-	<h2>Album de fotos:</h2>
-	<a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}">Ver álbum de fotos</a>
+    <div class="viaje-grid">
 
-	<hr>
-	<h2>Gastos del Viaje (Tricount):</h2>
-	<p>Controla quién ha pagado qué y calcula las deudas automáticamente.</p>
+        <div class="viaje-card viaje-participantes">
+            <h2>Participantes</h2>
+            <button class="btn-agregar-participante" onclick="modalParticipantes()">+ Agregar participante</button>
+            <ul class="participantes-lista">
+                {% for participante in participantes %}
+                    {% if participante.viaje.idViaje == viaje.idViaje %}
+                        <li class="participante-item">
+                            <div class="participante-avatar">
+                                {{ participante.usuario.nombreUsuario|slice(0,2)|upper }}
+                            </div>
+                            <span class="participante-nombre">{{ participante.usuario.nombreUsuario }}</span>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li style="color: var(--texto-secundario); font-size: 13px;">No hay participantes.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-	<div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-		<a href="{{ path('ctrl_gastos_viaje', {'id': viaje.idViaje}) }}" style="background-color: #0095f6; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-			Gestionar Gastos
-		</a>
-	</div>
-	<hr>
+        {# GASTOS #}
+        <div class="viaje-card viaje-gastos">
+            <h2>Gastos</h2>
+            <div class="gastos-resumen">
+                <div class="gasto-stat">
+                    <div class="gasto-stat-label">Tú pagaste</div>
+                    <div class="gasto-stat-valor">—</div>
+                </div>
+                <div class="gasto-stat">
+                    <div class="gasto-stat-label">Total grupo</div>
+                    <div class="gasto-stat-valor">—</div>
+                </div>
+                <div class="gasto-stat">
+                    <div class="gasto-stat-label">Tú pagaste</div>
+                    <div class="gasto-stat-sub">-Tú grupo</div>
+                </div>
+            </div>
+            <div class="gastos-total-row">
+                <span class="gastos-total-label">Total grupo</span>
+                <span class="gastos-total-valor">—</span>
+            </div>
+            <a href="{{ path('ctrl_gastos_viaje', {'id': viaje.idViaje}) }}" class="btn-gestionar-gastos">
+                Gestionar Gastos
+            </a>
+        </div>
 
-	<h2>Publicar post sobre el viaje:</h2>
-	<form action="{{ path('ctrl_addPost', {'idViaje': viaje.idViaje}) }}" method="POST" enctype="multipart/form-data">
-		<textarea name="contenido" required placeholder="'Guillermo no hace nada'"></textarea><br>
-		<i>
-			<small>Máximo 5 archivos</small>
-		</i>
-		<input type="file" name="files[]" id="filesInput" multiple><br>
-		<div id="mensaje"></div>
-		<button type="submit">Publicar</button>
-	</form><br>
+        {# ACTIVIDADES #}
+        <div class="viaje-card viaje-actividades">
+            <h2>Actividades</h2>
+            <ul class="actividades-lista">
+                {% for actividad in actividades %}
+                    {% if actividad.viaje.idViaje == viaje.idViaje %}
+                        <li class="actividad-item">
+                            <div class="actividad-icono">📍</div>
+                            <div class="actividad-info">
+                                <div class="actividad-nombre">{{ actividad.nombre }}</div>
+                                {% if actividad.descripcion %}
+                                    <div class="actividad-desc">{{ actividad.descripcion }}</div>
+                                {% endif %}
+                                <div class="actividad-desc">
+                                    {{ actividad.fechaInicio|date('d/m/Y H:i') }} - {{ actividad.fechaFin|date('d/m/Y H:i') }}
+                                </div>
+                            </div>
+                            <a href="{{ path('ctrl_eliminar_actividad', {'id': actividad.idActividad}) }}" class="actividad-eliminar">x</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li style="color: var(--texto-secundario); font-size: 13px;">No hay actividades registradas.</li>
+                {% endfor %}
+            </ul>
 
-	<a href="{{ path('ctrl_viajes') }}">Volver a la lista de viajes</a>
+            <button class="actividad-form-toggle" onclick="toggleFormActividad()">+ Add Activity</button>
 
-	<script src="{{ asset('controllers/fileLimit.js') }}" defer></script>
+        </div>
+
+        {# ÁLBUM #}
+        <div class="viaje-card viaje-album">
+            <h2>Album de fotos</h2>
+            {% if fotosAlbum is not empty %}
+                <div class="album-grid">
+                    {% for albumMedia in fotosAlbum %}
+                        <div class="album-foto">
+                            {% if albumMedia.media.tipo == 'video' %}
+                                <video muted loop playsinline
+                                    onmouseenter="this.play()"
+                                    onmouseleave="this.pause(); this.currentTime=0;">
+                                    <source src="{{ asset('uploads/' ~ albumMedia.media.rutaArchivo) }}">
+                                </video>
+                            {% else %}
+                                <img src="{{ asset('uploads/' ~ albumMedia.media.rutaArchivo) }}" alt="Foto del viaje">
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="album-vacio">No se encuentran fotos en este álbum.</p>
+            {% endif %}
+            <a href="{{ path('ctrl_album', {'id': viaje.idViaje}) }}" class="btn-ver-album">
+                Ver album completo
+            </a>
+        </div>
+
+        {# PUBLICAR #}
+        <div class="viaje-card viaje-publicar">
+            <h2>Publicar post</h2>
+            <form action="{{ path('ctrl_addPost', {'idViaje': viaje.idViaje}) }}" method="POST" enctype="multipart/form-data">
+                <textarea class="post-textarea" name="contenido" required placeholder="'Guillermo no hace nada'"></textarea>
+                <div class="post-adjuntos">
+                    <small>Máximo 5 archivos</small>
+                    <label class="btn-elegir-archivos" for="filesInput">Elegir archivos</label>
+                    <input type="file" name="files[]" id="filesInput" multiple style="display:none;">
+                    <span id="mensaje" style="font-size:11px; color: var(--texto-secundario);">Ningún archivo seleccionado</span>
+                </div>
+                <div class="post-footer">
+                    <button type="submit" class="btn-publicar">Publicar</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="modal-actividad" class="modal-overlay" style="display:none;" onclick="cerrarModalActividad(event)">
+        <div class="modal-box">
+            <h3>Nueva actividad</h3>
+            <form action="{{ path('ctrl_agregar_actividad', {'id': viaje.idViaje}) }}" method="post">
+                <input type="text" name="actividad" placeholder="Nueva actividad" required>
+                <input type="text" name="descripcion" placeholder="Descripción">
+                <input type="datetime-local" name="fecha">
+                <input type="datetime-local" name="fechaFin">
+                <div class="actividad-form-btns">
+                    <button type="button" class="btn-cancelar" onclick="toggleFormActividad()">Cancelar</button>
+                    <button type="submit" class="btn-agregar">Añadir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-participantes" class="modal-overlay" style="display:none;" onclick="cerrarModalParticipantes(event)">
+        <div class="modal-box">
+            <h3>Agregar participante</h3>
+            <form action="{{ path('ctrl_agregar_participante', {'id': viaje.idViaje}) }}" method="post">
+                <div class="buscador-wrapper">
+                    <input type="text" id="input-busqueda-usuario" name="nombreUsuario" 
+                        placeholder="Empieza a escribir..." autocomplete="off" required>
+                    
+                    <div id="sugerencias-usuarios"></div>
+                </div>
+                
+                <div class="actividad-form-btns" style="margin-top: 15px;">
+                    <button type="button" class="btn-cancelar" onclick="modalParticipantes()">Cancelar</button>
+                    <button type="submit" class="btn-agregar">Añadir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <a href="{{ path('ctrl_viajes') }}" class="viaje-volver">Volver a la lista →</a>
+
+</div>
+
+<script src="{{ asset('controllers/fileLimit.js') }}" defer></script>
+<script>
+    function toggleFormActividad() {
+        const modal = document.getElementById('modal-actividad');
+        modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function cerrarModalActividad(event) {
+        if (event.target === document.getElementById('modal-actividad')) {
+            document.getElementById('modal-actividad').style.display = 'none';
+        }
+    }
+
+    function modalParticipantes() {
+        const modal2 = document.getElementById('modal-participantes');
+        modal2.style.display = modal2.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function cerrarModalParticipantes(event) {
+        if (event.target === document.getElementById('modal-participantes')) {
+            document.getElementById('modal-participantes').style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('input-busqueda-usuario');
+        const caja = document.getElementById('sugerencias-usuarios');
+
+        input.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                caja.style.display = 'none';
+                caja.innerHTML = '';
+                return;
+            }
+
+            fetch(`/buscarUsuarios?q=${query}`)
+                .then(res => res.json())
+                .then(usuarios => {
+                    caja.innerHTML = ''; 
+                    
+                    if (usuarios.length > 0) {
+                        usuarios.forEach(user => {
+                            const div = document.createElement('div');
+                            div.className = 'sugerencia-item';
+                            div.innerHTML = `
+                                <img src="/img/${user.fotoPerfil}" style="width: 32px; height: 32px;" alt="u">
+                                <span>${user.nombre}</span>
+                            `;
+                            
+                            div.onclick = () => {
+                                input.value = user.nombreUsuario; 
+                                caja.style.display = 'none'; 
+                            };
+                            
+                            caja.appendChild(div);
+                        });
+                        caja.style.display = 'block';
+                    } else {
+                        caja.style.display = 'none';
+                    }
+                });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !caja.contains(e.target)) {
+                caja.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% endblock %}

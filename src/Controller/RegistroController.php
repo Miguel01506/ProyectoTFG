@@ -78,7 +78,7 @@ class RegistroController extends AbstractController
         $nuevoUsu->setEmail($email);
         $nuevoUsu->setClave(password_hash($pass, PASSWORD_DEFAULT));
         $nuevoUsu->setNombreUsuario($username);
-        $nuevoUsu->setFotoPerfil("default.png");
+        $nuevoUsu->setFotoPerfil("default.jpg");
         $nuevoUsu->setRol('usuario');
         $nuevoUsu->setToken(bin2hex(random_bytes(32)));
         $nuevoUsu->setActivo(false);

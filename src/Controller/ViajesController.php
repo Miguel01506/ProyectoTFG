@@ -3,12 +3,15 @@ namespace App\Controller;
 
 use App\Entity\Actividades;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Participante;
 use App\Entity\Viaje;
 use App\Entity\Album;
+use App\Entity\AlbumMedia;
+use App\Entity\Usuario;
 
 class ViajesController extends AbstractController
 {
@@ -118,13 +121,25 @@ class ViajesController extends AbstractController
             'viaje' => $viaje,
         ]);
 
-        $album = $viaje->getAlbum();
+        $album = $em->getRepository(Album::class)->findOneBy([
+            'viaje' => $viaje,
+        ]);
+
+        $fotosAlbum = [];
+        if ($album) {
+            $fotosAlbum = $em->getRepository(AlbumMedia::class)->findBy(
+                ['album' => $album],
+                ['id' => 'ASC'],
+                6
+            );
+        }
 
         return $this->render('detallesviaje.html.twig', [
-            'viaje' => $viaje,
+            'viaje'         => $viaje,
             'participantes' => $participantes,
-            'actividades' => $actividades,
-            'album' => $album
+            'actividades'   => $actividades,
+            'album'         => $album,
+            'fotosAlbum'    => $fotosAlbum,
         ]);
     }
 
@@ -205,6 +220,66 @@ class ViajesController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $viaje->getIdViaje()]);
+    }
+
+    #[Route('/buscarUsuarios', name: 'buscar_usuarios', methods: ['GET'])]
+    public function buscarUsuarios(Request $request, EntityManagerInterface $em): JsonResponse 
+    {
+        $query = $request->query->get('q', '');
+
+        if (strlen($query) < 1) {
+            return new JsonResponse([]);
+        }
+
+        $usuarios = $em->getRepository(Usuario::class)->createQueryBuilder('u')
+            ->where('u.nombreUsuario LIKE :q')
+            ->setParameter('q', '%' . $query . '%')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+
+        $data = [];
+        foreach ($usuarios as $user) {
+            $data[] = [
+                'nombre'       => $user->getNombreUsuario(),
+                'nombreUsuario' => $user->getNombreUsuario(),
+                'fotoPerfil'   => $user->getFotoPerfil() ?: 'default.jpg',
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+    // --- TU CONTROLADOR ACTUAL (Para procesar el formulario) ---
+    #[Route('/agregarParticipante/{id}', name: 'ctrl_agregar_participante', methods: ['POST'])]
+    public function agregarParticipante(int $id, Request $request, EntityManagerInterface $em)
+    {
+        $viaje = $em->getRepository(Viaje::class)->find($id);
+        $nombreUsuario = $request->request->get('nombreUsuario');
+        $usuario = $em->getRepository(Usuario::class)->findOneBy(['nombreUsuario' => $nombreUsuario]);
+
+        if (!$usuario) {
+            $this->addFlash('error', 'El usuario "' . $nombreUsuario . '" no existe.');
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
+        }
+
+        $existe = $em->getRepository(Participante::class)->findOneBy([
+            'viaje' => $viaje,
+            'usuario' => $usuario
+        ]);
+
+        if (!$existe) {
+            $participante = new Participante();
+            $participante->setViaje($viaje);
+            $participante->setUsuario($usuario);
+            $em->persist($participante);
+            $em->flush();
+            $this->addFlash('mensaje', '¡' . $nombreUsuario . ' añadido!');
+        } else {
+            $this->addFlash('error', 'Ya está en el viaje.');
+        }
+
+        return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
     }
 
 }

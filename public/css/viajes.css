@@ -157,3 +157,9 @@
     border: 2px dashed var(--color-beige);
     color: #888;
 }
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+    }
+}
