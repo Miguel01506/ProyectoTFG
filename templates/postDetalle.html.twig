@@ -1,0 +1,62 @@
+{% extends "base.html.twig" %}
+{% block title %}Detalles Post
+{% endblock %}
+{% block body %}
+	{% for error in app.flashes('error') %}
+		<div style="color: red;">
+			{{ error }}
+		</div>
+	{% endfor %}
+
+	<a href="{{ path('ctrl_detalles_viaje', {'id': viaje.idViaje}) }}">Ir al viaje
+		{{ viaje.nombre }}</a>
+
+	<h1>Publicación de
+		{{ post.autor.nombreUsuario ?? post.autor.email }}</h1>
+	<p>Viaje de origen:
+		<b>{{ viaje.nombre }}</b>
+	</p>
+	<p>Fecha:
+		{{ post.fechaPublicacion|date('d/m/Y H:i') }}</p>
+
+	<p>{{ post.texto }}</p>
+
+	{% if post.postMedia is not empty %}
+		<h3>Archivos adjuntos:</h3>
+		<div>
+			{% for pm in post.postMedia %}
+				<div>
+					{% if pm.media.tipo in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
+						<img width="50" src="{{ asset('posts/' ~ pm.media.rutaArchivo) }}" alt="Foto">
+					{% elseif pm.media.tipo in ['mp4', 'mov', 'avi'] %}
+						<video controls width="320">
+							<source src="{{ asset('posts/' ~ pm.media.rutaArchivo) }}" type="video/{{ pm.media.tipo == 'mov' ? 'quicktime' : pm.media.tipo }}">
+							Tu navegador no soporta vídeos.
+						</video>
+					{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+	<p>
+		{{ post.reacciones|length }}reacciones
+	</p>
+</small></p><h2>Comentarios ({{ post.comentarios|length }})</h2><br>
+
+<form action="{{ path('ctrl_addComentario', {'id': post.id}) }}" method="POST">
+    <textarea name="texto_comentario" required placeholder="Comenta qué piensas"></textarea>
+    <br>
+    <button type="submit">Comentar</button>
+</form><br>
+
+    {% for comentario in post.comentarios %}
+<div>
+
+	<b>{{ comentario.usuario.nombreUsuario }}</b>
+	comenta:
+
+	<p>{{ comentario.texto }}</p>
+	<small>{{ comentario.fechaComentario|date('d/m/Y H:i') }}:</small>
+</div>{% else %}
+<p>No hay comentarios en este post. Comenta el primero</p>{% endfor %}{% endblock %}

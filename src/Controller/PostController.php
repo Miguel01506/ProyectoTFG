@@ -12,6 +12,7 @@ use App\Entity\Media;
 use App\Entity\PostMedia;
 use App\Entity\Post;
 use App\Entity\Viaje;
+use App\Entity\Comentario;
 use DateTime;
 
 class PostController extends AbstractController
@@ -67,7 +68,7 @@ class PostController extends AbstractController
                 // el uniqid genera un id creo que basándose en la fecha actual, así que sería mala suerte que se sobreescriban
                 $nombreArchivo = uniqid() . '_' . $archivo->getClientOriginalName();
                 $archivo->move($this->getParameter('posts_directory'), $nombreArchivo);
-                
+
                 $extension = strtolower($archivo->getClientOriginalExtension());
 
                 $media = new Media();
@@ -90,5 +91,49 @@ class PostController extends AbstractController
 
         $this->addFlash('mensaje', 'Post publicado con éxito.');
         return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $idViaje]);
+    }
+
+    #[Route('/post/{id}', name: 'ctrl_postDetalle')]
+    public function postDetalle(int $id, EntityManagerInterface $em): Response
+    {
+        $post = $em->getRepository(Post::class)->find($id);
+
+        if (!$post) {
+            return $this->redirectToRoute('ctrl_home');
+        }
+
+        return $this->render('postDetalle.html.twig', [
+            'post' => $post,
+            'viaje' => $post->getViaje(),
+        ]);
+    }
+
+    #[Route('/post/{id}/comentar', name: 'ctrl_addComentario', methods: ['POST'])]
+    public function addComentario(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $post = $em->getRepository(Post::class)->find($id);
+
+        if (!$post) {
+            return $this->redirectToRoute('ctrl_home');
+        }
+
+        $texto = $request->request->get('texto_comentario');
+        $usuario = $this->getUser();
+
+        if (empty(trim($texto))) {
+            $this->addFlash('error', 'El comentario no puede estar vacío.');
+            return $this->redirectToRoute('ctrl_postDetalle', ['id' => $id]);
+        }
+
+        $comentario = new Comentario();
+        $comentario->setTexto($texto);
+        $comentario->setPost($post);
+        $comentario->setUsuario($usuario);
+        $comentario->setFechaComentario(new DateTime());
+
+        $em->persist($comentario);
+        $em->flush();
+
+        return $this->redirectToRoute('ctrl_postDetalle', ['id' => $id]);
     }
 }
