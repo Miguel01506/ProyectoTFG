@@ -126,6 +126,18 @@
     margin-bottom: 18px;
 }
 
+.card-header h2 {
+    margin-bottom: 0; 
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 10px;
+}
+
 /* ── PARTICIPANTES ── */
 .participantes-lista {
     list-style: none;
@@ -162,7 +174,6 @@
     color: var(--texto-secundario);
     font-weight: 600;
     text-align: center;
-    max-width: 60px;
     white-space: nowrap;
 }
 

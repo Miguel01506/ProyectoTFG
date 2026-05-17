@@ -26,8 +26,10 @@
     <div class="viaje-grid">
 
         <div class="viaje-card viaje-participantes">
-            <h2>Participantes</h2>
-            <button class="btn-agregar-participante" onclick="modalParticipantes()">+ Agregar participante</button>
+            <div class="card-header">
+                <h2>Participantes</h2>
+                <button class="btn-agregar" onclick="modalParticipantes()">+ Agregar participante</button>
+            </div>
             <ul class="participantes-lista">
                 {% for participante in participantes %}
                     {% if participante.viaje.idViaje == viaje.idViaje %}
@@ -42,6 +44,7 @@
                     <li style="color: var(--texto-secundario); font-size: 13px;">No hay participantes.</li>
                 {% endfor %}
             </ul>
+            
         </div>
 
         {# GASTOS #}
@@ -105,7 +108,7 @@
             {% if fotosAlbum is not empty %}
                 <div class="album-grid">
                     {% for albumMedia in fotosAlbum %}
-                        <div class="album-foto">
+                        <div class="album-foto" style="cursor: pointer;" onclick="window.location.href='{{ path('ctrl_album', {'id': viaje.idViaje}) }}'">
                             {% if albumMedia.media.tipo == 'video' %}
                                 <video muted loop playsinline
                                     onmouseenter="this.play()"

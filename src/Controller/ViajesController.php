@@ -250,7 +250,6 @@ class ViajesController extends AbstractController
         return new JsonResponse($data);
     }
 
-    // --- TU CONTROLADOR ACTUAL (Para procesar el formulario) ---
     #[Route('/agregarParticipante/{id}', name: 'ctrl_agregar_participante', methods: ['POST'])]
     public function agregarParticipante(int $id, Request $request, EntityManagerInterface $em)
     {
