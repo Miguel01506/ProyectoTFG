@@ -1,6 +1,46 @@
 {% extends "base.html.twig" %}
-{% block title %}Login
+{% block title %}Feed Aura
 {% endblock %}
 {% block body %}
-	<h1>Logueado</h1>
+	<h1>Feed Aura</h1>
+
+	{%for post in posts %}
+		<div>
+			<p>
+				<b>{{ post.autor.nombreUsuario }}</b>
+				ha publicado en
+				<a href="{{ path('ctrl_detalles_viaje', {'id': post.viaje.idViaje}) }}">
+					<b>{{ post.viaje.nombre }}</b>
+				</a>
+
+				{{ post.fechaPublicacion|date('d/m/Y H:i') }}
+			</p>
+
+			<a href="{{ path('ctrl_postDetalle', {'id': post.id}) }}">
+				<p>{{ post.texto }}</p>
+			</a>
+
+			{% if post.postMedia is not empty %}
+				<a href="{{ path('ctrl_postDetalle', {'id': post.id}) }}">
+					<small>
+						Contiene
+						{{ post.postMedia|length }}
+						archivos
+					</small>
+				</a>
+			{% endif %}
+
+			<p>
+				<small>
+					{{ post.comentarios|length }}
+					comentarios</small>
+				|
+				<small>
+					{{ post.reacciones|length }}
+					reacciones</small>
+			</p>
+		</div>
+	{% else %}
+		<p>No hay ninguna publicación todavía.</p>
+	{% endfor %}
 {% endblock %}
