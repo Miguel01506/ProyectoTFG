@@ -25,12 +25,7 @@ class AlbumController extends AbstractController
         ]);
 
         if (!$album) {
-            return $this->render('albumviaje.html.twig', [
-                'album' => null,
-                'participanteActual' => $participanteActual,
-                'contenidoAlbum' => [],
-                'error' => 'Álbum no encontrado'
-            ]);
+            return $this->redirectToRoute('ctrl_viajes');
         }
 
         $esParticipante = $em->getRepository(Participante::class)->findOneBy([
@@ -67,12 +62,7 @@ class AlbumController extends AbstractController
         $album = $em->getRepository(Album::class)->findOneBy(['viaje' => $id]);
 
         if (!$album) {
-            return $this->render('albumviaje.html.twig', [
-                'album' => null,
-                'participanteActual' => null,
-                'contenidoAlbum' => [],
-                'error' => 'Álbum no encontrado'
-            ]);
+            return $this->redirectToRoute('ctrl_viajes');
 
         }
 

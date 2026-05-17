@@ -73,6 +73,7 @@
   color: #546B41;
   margin: 0 0 1.75rem;
   text-align: center;
+  font-family: var(--fuente-titulos);
 }
 
 .card-login label {

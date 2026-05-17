@@ -33,45 +33,36 @@ class RegistroController extends AbstractController
         }
 
         $username = $request->request->get('username');
-        $email = $request->request->get('email');
-        $pass = $request->request->get('password');
-        $pass2 = $request->request->get('password2');
+        $email    = $request->request->get('email');
+        $pass     = $request->request->get('password');
+        $pass2    = $request->request->get('password2');
 
         if (empty($username) || empty($email) || empty($pass) || empty($pass2)) {
-            return $this->render('registro.html.twig', [
-                'error' => 'Todos los campos son obligatorios.',
-            ]);
+            $this->addFlash('error', 'Todos los campos son obligatorios.');
+            return $this->redirectToRoute('ctrl_registro');
         }
 
         if ($pass !== $pass2) {
-            return $this->render('registro.html.twig', [
-                'error' => 'Las contraseñas no coinciden.',
-            ]);
+            $this->addFlash('error', 'Las contraseñas no coinciden.');
+            return $this->redirectToRoute('ctrl_registro');
         }
 
-        // Validación de formato de contraseña: al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número
         $formatoClave = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
-
         if (!preg_match($formatoClave, $pass)) {
-            return $this->render('registro.html.twig', [
-                'error' => 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.',
-            ]);
+            $this->addFlash('error', 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.');
+            return $this->redirectToRoute('ctrl_registro');
         }
 
         $usu = $entityManager->getRepository(Usuario::class);
-        $usuEmail = $usu->findOneBy(['email' => $email]);
-        $usuNombre = $usu->findOneBy(['nombreUsuario' => $username]);
 
-        if ($usuEmail) {
-            return $this->render('registro.html.twig', [
-                'error' => 'Este email ya está registrado.',
-            ]);
+        if ($usu->findOneBy(['email' => $email])) {
+            $this->addFlash('error', 'Este email ya está registrado.');
+            return $this->redirectToRoute('ctrl_registro');
         }
 
-        if ($usuNombre) {
-            return $this->render('registro.html.twig', [
-                'error' => 'Este nombre de usuario ya existe.',
-            ]);
+        if ($usu->findOneBy(['nombreUsuario' => $username])) {
+            $this->addFlash('error', 'Este nombre de usuario ya existe.');
+            return $this->redirectToRoute('ctrl_registro');
         }
 
         $nuevoUsu = new Usuario();
@@ -87,22 +78,20 @@ class RegistroController extends AbstractController
         $entityManager->persist($nuevoUsu);
         $entityManager->flush();
 
-        $email = $request->request->get('email');
-        $username = $request->request->get('username');
-        $token = $entityManager->getRepository(Usuario::class)->findOneBy(['email' => $email])->getToken();
+        $token = $nuevoUsu->getToken();
 
-        $message = new Email();
-        $message->from(new Address('befly@gmail.com', "BeFly"));
-        $message->to(new Address($email));
-        $message->subject("Verificación de correo electrónico");
-        $message->html("<h1>Hola $username!</h1>"
-            . "<p>Gracias por registrarte en BeFly. Por favor, haz clic en el siguiente enlace para verificar tu correo electrónico:</p>"
-            . "<a href='http://localhost:8000/verificar_registro/$email/$token'>Verificar correo electrónico</a>");
+        $message = (new Email())
+            ->from(new Address('befly@gmail.com', 'BeFly'))
+            ->to(new Address($email))
+            ->subject('Verificación de correo electrónico')
+            ->html("<h1>Hola $username!</h1>
+                <p>Gracias por registrarte en BeFly. Haz clic en el enlace para verificar tu correo:</p>
+                <a href='http://localhost:8000/verificar_registro/$email/$token'>Verificar correo electrónico</a>");
+
         $mailer->send($message);
 
-        return $this->render('registro.html.twig', [
-            'success' => 'Registro exitoso. Por favor, verifica tu correo electrónico para activar tu cuenta.',
-        ]);
+        $this->addFlash('success', 'Registro exitoso. Por favor, verifica tu correo electrónico para activar tu cuenta.');
+        return $this->redirectToRoute('ctrl_registro');
     }
 
     #[Route('/verificar_registro/{email}/{token}', name: 'ctrl_verificar_registro')]
@@ -116,15 +105,11 @@ class RegistroController extends AbstractController
         $usuario = $usu->findOneBy(['email' => $email, 'token' => $token]);
 
         if (!$usuario) {
-            return $this->render('registro.html.twig', [
-                'error' => 'Enlace de verificación inválido.',
-            ]);
+            $this->addFlash('error', 'Enlace de verificación inválido.');
         }
 
         if ($usuario->getTokenExpiracion() < new DateTime()) {
-            return $this->render('registro.html.twig', [
-                'error' => 'El token ha expirado.',
-            ]);
+            $this->addFlash('error', 'El token ha expirado.');
         }
 
         $usuario->setActivo(true);

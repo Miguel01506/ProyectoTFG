@@ -1,17 +1,28 @@
 {% extends "base.html.twig" %}
 {% block title %}Recuperar contraseña
 {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/recuperarcontra.css') }}">
+{% endblock %}
+
 {% block body %}
+	{% for mensaje in app.flashes('error') %}
+        <div class="flash-error flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
+    {% endfor %}
+
+    {% for mensaje in app.flashes('mensaje') %}
+        <div class="flash-mensaje flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
+    {% endfor %}
     <h1>Recuperar contraseña</h1>
-	{% if error is defined %}
-		<div style="color: red">{{ error }}</div>
-	{% endif %}
     
 	<form action="{{ path('ctrl_procesarecuperar') }}" method="post">
 
-		<label for="email">Email:</label><br>
-		<input type="text" id="email" name="email"/>
-		<br><br>
+		<input type="text" id="email" name="email" placeholder="Email"/>
+		<br>
 		<button type="submit">Recuperar contraseña</button>
 	</form>
 {% endblock %}

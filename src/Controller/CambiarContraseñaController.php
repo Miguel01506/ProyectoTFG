@@ -91,8 +91,8 @@ class CambiarContraseñaController extends AbstractController
         }
 
         if (empty($clave) || empty($repetirClave)) {
+            $this->addFlash('error', 'Complete todos los campos.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'Complete todos los campos.',
                 'email' => $email,
             ]);
         }
@@ -100,15 +100,15 @@ class CambiarContraseñaController extends AbstractController
         //la contraseña tiene al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.
         $formatoClave = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
         if (!preg_match($formatoClave, $clave)) {
+            $this->addFlash('error', 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.',
                 'email' => $email,
             ]);
         }
 
         if ($clave !== $repetirClave) {
+            $this->addFlash('error', 'Las contraseñas no coinciden.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'Las contraseñas no coinciden.',
                 'email' => $email,
             ]);
         }

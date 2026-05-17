@@ -31,12 +31,16 @@ class RecuperarPassController extends AbstractController
 
         $email = $request->request->get('email');
 
+        if (!$email){
+            $this->addFlash('error', 'Complete todos los campos.');
+            return $this->redirectToRoute('ctrl_recuperarpass');
+        }
+
         $usuario = $em->getRepository(Usuario::class)->findOneBy(['email' => $email]);
 
         if (!$usuario) {
-            return $this->render('recuperarpass.html.twig', [
-                'error' => 'No se encontró ningún usuario con ese correo electrónico.',
-            ]);
+            $this->addFlash('error', 'No existe ese correo en la base de datos');
+            return $this->redirectToRoute('ctrl_recuperarpass');
         }
 
         $nuevoToken = bin2hex(random_bytes(16));
@@ -50,9 +54,9 @@ class RecuperarPassController extends AbstractController
         $nombreUsuario = $usuario->getNombreUsuario();
 
         $message = new Email();
-        $message->from(new Address('befly@gmail.com', "BeFly"));
+        $message->from(new Address('tripmate@gmail.com', "Tripmate"));
         $message->to(new Address($email));
-        $message->subject("Verificación de recuperación de contraseña en BeFly");
+        $message->subject("Verificación de recuperación de contraseña en Tripmate");
         $message->html("<h1>Hola, $nombreUsuario!</h1>"
             . "<p>Por favor, haz clic en el siguiente enlace para cambiar la contraseña:</p>"
             . "<a href='http://localhost:8000/verificar_cambiarcontraseña/$email/$nuevoToken'>Verificar cambiar contraseña</a>");
@@ -72,21 +76,15 @@ class RecuperarPassController extends AbstractController
         $usuario = $em->getRepository(Usuario::class)->findOneBy(['email' => $email]);
 
         if (!$usuario) {
-            return $this->render('recuperarpass.html.twig', [
-                'error' => 'No se encontró ningún usuario con ese correo electrónico.',
-            ]);
+            $this->addFlash('error', 'No se encontró a ningun usuario con ese correo electrónico');
         }
 
         if ($usuario->getToken() !== $token) {
-            return $this->render('recuperarpass.html.twig', [
-                'error' => 'Token inválido.',
-            ]);
+            $this->addFlash('error', 'Token inválido');
         }
 
         if ($usuario->getTokenExpiracion() < new DateTime()) {
-            return $this->render('recuperarpass.html.twig', [
-                'error' => 'El token ha expirado.',
-            ]);
+            $this->addFlash('error', 'El token expiró');
         }
 
         return $this->render('cambiarcontraseña.html.twig', [
@@ -108,8 +106,8 @@ class RecuperarPassController extends AbstractController
         $usuario = $em->getRepository(Usuario::class)->findOneBy(['email' => $email]);
 
         if (!$usuario) {
+            $this->addFlash('error', 'No se encontró a ningun usuario con ese correo electrónico');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'No se encontró ningún usuario con ese correo electrónico.',
                 'email' => $email,
             ]);
         }
@@ -121,8 +119,8 @@ class RecuperarPassController extends AbstractController
         }
 
         if (empty($clave) || empty($repetirClave)) {
+            $this->addFlash('error', 'Complete todos los campos.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'Complete todos los campos.',
                 'email' => $email,
             ]);
         }
@@ -130,15 +128,15 @@ class RecuperarPassController extends AbstractController
         //la contraseña tiene al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.
         $formatoClave = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/";
         if (!preg_match($formatoClave, $clave)) {
+            $this->addFlash('error', 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula y un número.',
                 'email' => $email,
             ]);
         }
 
         if ($clave !== $repetirClave) {
+            $this->addFlash('error', 'Las contraseñas no coinciden.');
             return $this->render('cambiarcontraseña.html.twig', [
-                'error' => 'Las contraseñas no coinciden.',
                 'email' => $email,
             ]);
         }

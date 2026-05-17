@@ -8,11 +8,16 @@
 {% block body %}
 <div class="viaje-wrapper">
 
-    {% for error in app.flashes('error') %}
-        <div class="flash-error">{{ error }}</div>
+    {% for mensaje in app.flashes('error') %}
+        <div class="flash-error flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
     {% endfor %}
+
     {% for mensaje in app.flashes('mensaje') %}
-        <div class="flash-mensaje">{{ mensaje }}</div>
+        <div class="flash-mensaje flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
     {% endfor %}
 
     <div class="viaje-hero">
@@ -98,7 +103,7 @@
                 {% endfor %}
             </ul>
 
-            <button class="actividad-form-toggle" onclick="toggleFormActividad()">+ Add Activity</button>
+            <button class="actividad-form-toggle" onclick="toggleFormActividad()">+ Agregar actividad</button>
 
         </div>
 

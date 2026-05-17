@@ -1,35 +1,35 @@
 {% extends "base.html.twig" %}
 {% block title %}Registro{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/registro.css') }}">
+{% endblock %}
 {% block body %}
-    {% if error is defined and error is not null %}
-        <div style="color: red;">
-            {{ error }}
+    {% for mensaje in app.flashes('error') %}
+        <div class="flash-error flash-alert" role="alert">
+            {{ mensaje }}
         </div>
-    {% endif %}
-    {% if success is defined and success is not null %}
-        <div style="color: green;">
-            {{ success }}
+    {% endfor %}
+
+    {% for mensaje in app.flashes('mensaje') %}
+        <div class="flash-mensaje flash-alert" role="alert">
+            {{ mensaje }}
         </div>
-    {% endif %}
+    {% endfor %}
     <h1>Registro de nuevo usuario</h1>
 
     <form action="{{ path('ctrl_procesar_registro') }}" method="post">
 
-        <label for="username">Usuario</label><br>
-        <input type="text" id="username" name="username" value="" />
-        <br><br>
+        <input type="text" id="username" name="username" value="" placeholder="Nombre de usuario"/>
+        <br>
 
-        <label for="email">Correo electrónico:</label><br>
-        <input type="email" id="email" name="email" value="" />
-        <br><br>
+        <input type="email" id="email" name="email" value="" placeholder="Correo electrónico"/>
+        <br>
 
-        <label for="password">Clave:</label><br>
-        <input type="password" id="password" name="password" />
-        <br><br>
+        <input type="password" id="password" name="password" placeholder="Clave"/>
+        <br>
 
-        <label for="password2">Repite la clave:</label><br>
-        <input type="password" id="password2" name="password2" />
-        <br><br>
+        <input type="password" id="password2" name="password2" placeholder="Repite la clave que pusiste arriba"/>
+        <br>
 
         <button type="submit">Registrar</button>
     </form>

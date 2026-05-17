@@ -68,6 +68,7 @@ class ViajesController extends AbstractController
         }
 
         // lo dejo así comentado por si el llorón de miguel nos convence alguna vez de que esto tiene sentido
+        // claro que tiene sentido retrasado para que vas a querer hacer un viaje en el pasado
         /* if (new \DateTime($fechaInicio) < new \DateTime()) {
             $this->addFlash('error', 'La fecha de inicio no puede ser en el pasado.');
             return $this->redirectToRoute('ctrl_viajes');
@@ -171,16 +172,16 @@ class ViajesController extends AbstractController
         $fechaFinActividad = new \DateTime($actividadFechaFin);
 
         if (!$actividadNombre || !$actividadFechaInicio || !$actividadFechaFin) {
-            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'missing_fields']);
+            $this->addFlash('error', 'Todos los campos son obligatorios.');
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
         }
         if ($fechaInicioActividad > $fechaFinActividad) {
-            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'invalid_dates']);
-        }
-        if ($fechaInicioActividad < new \DateTime() || $fechaFinActividad < new \DateTime()) {
+            $this->addFlash('error', 'La fecha de inicio debe ser anterior a la fecha de fin.');
             return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
         }
         if ($fechaInicioActividad < $viaje->getFechaInicio() || $fechaFinActividad > $viaje->getFechaFin()) {
-            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id, 'error' => 'invalid_dates']);
+            $this->addFlash('error', 'Las fechas deben estar dentro del rango del viaje.');
+            return $this->redirectToRoute('ctrl_detalles_viaje', ['id' => $id]);
         }
 
         $actividad = new Actividades();

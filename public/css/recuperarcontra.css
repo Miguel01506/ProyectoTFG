@@ -1,0 +1,113 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+h1 {
+  font-family: var(--fuente-titulos);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-verde-oscuro);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 15px;
+  font-family: var(--fuente-cuerpo);
+  border: none;
+  border-bottom: 1.5px solid var(--color-beige);
+  background: transparent;
+  color: var(--texto-principal);
+  margin-bottom: 28px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]::placeholder {
+  color: var(--color-verde-claro);
+  font-size: 14px;
+}
+
+input[type="text"]:focus {
+  border-bottom-color: var(--color-verde-oscuro);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--fuente-cuerpo);
+  border: none;
+  border-radius: 10px;
+  background: var(--color-verde-claro);
+  color: var(--blanco);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+  background: var(--color-verde-oscuro);
+}
+
+/* ── FLASHES ── */
+.flash-alert {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  min-width: 300px;
+  max-width: 480px;
+  z-index: 9999;
+  opacity: 0;
+  animation: flashEntrar 0.35s ease forwards, flashSalir 0.35s ease 3.5s forwards;
+}
+
+.flash-error {
+  background: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.flash-mensaje {
+  background: #eafaf1;
+  color: #27ae60;
+  border: 1px solid #b7dfcb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes flashEntrar {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes flashSalir {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}

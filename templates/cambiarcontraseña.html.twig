@@ -2,10 +2,18 @@
 {% block title %}Cambiar contraseña
 {% endblock %}
 {% block body %}
+	{% for mensaje in app.flashes('error') %}
+        <div class="flash-error flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
+    {% endfor %}
+
+    {% for mensaje in app.flashes('mensaje') %}
+        <div class="flash-mensaje flash-alert" role="alert">
+            {{ mensaje }}
+        </div>
+    {% endfor %}
 	<h1>Cambiar contraseña</h1>
-	{% if error is defined %}
-		<div style="color: red">{{ error }}</div>
-	{% endif %}
 	<form action="{{ path('ctrl_cambiarcontraseña') }}" method="post">
 
 		<input type="hidden" name="email" value="{{ email }}"/>

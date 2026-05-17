@@ -1,80 +1,54 @@
 {% extends "base.html.twig" %}
-{% block title %}Login
+{% block title %}Profile
 {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
+{% endblock %}
+
 {% block body %}
-	{% for mensaje in app.flashes('mensaje') %}
-		<div style="color: green;">
-			{{ mensaje }}
-		</div>
-	{% endfor %}
+{% for mensaje in app.flashes('mensaje') %}
+    <div class="flash-mensaje flash-alert" role="alert">{{ mensaje }}</div>
+{% endfor %}
 
-	<h1>Tu Perfil</h1>
-	<img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto" width="150">
+<div class="profile-wrapper">
 
-	<p>Bienvenido,
-		{{ app.user.nombreUsuario }}!</p>
-	<p>Email:
-		{{ app.user.email }}</p>
-	<p>Seguidores:
-		{{ numSeguidores }}</p>
-	<p>Siguiendo:
-		{{ numSeguidos }}</p>
-	<ul>
-		{% if app.user.fechaNacimiento %}
-			<li>Fecha de nacimiento:
-				{{ app.user.fechaNacimiento|date('d-m-Y') }}</li>
-		{% endif %}
+    <div class="profile-header">
+        <div class="profile-avatar-wrap">
+            <img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto">
+        </div>
+        <div class="profile-info">
+            <h1>{{ app.user.nombreUsuario }}</h1>
+            <p class="profile-email">{{ app.user.email }}</p>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <span class="profile-stat-num">{{ numSeguidores }}</span>
+                    <span class="profile-stat-label">Seguidores</span>
+                </div>
+                <div class="profile-stat">
+                    <span class="profile-stat-num">{{ numSeguidos }}</span>
+                    <span class="profile-stat-label">Siguiendo</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		{% if app.user.ciudad %}
-			<li>Ciudad:
-				{{ app.user.ciudad }}</li>
-		{% endif %}
+    <div class="profile-details">
+        {% if app.user.fechaNacimiento %}
+            <span class="profile-tag">{{ app.user.fechaNacimiento|date('d-m-Y') }}</span>
+        {% endif %}
+        {% if app.user.ciudad %}
+            <span class="profile-tag">{{ app.user.ciudad }}</span>
+        {% endif %}
+        {% if app.user.biografia %}
+            <span class="profile-tag">{{ app.user.biografia }}</span>
+        {% endif %}
+    </div>
 
-		{% if app.user.biografia %}
-			<li>Biografía:
-				{{ app.user.biografia }}</li>
-		{% endif %}
-	</ul>
-	<a href="{{ path('ctrl_editarProfile') }}">Editar perfil</a>
-	<br><br>
-	<h3>¿Qué estás pensando?</h3>
+    <a href="{{ path('ctrl_editarProfile') }}" class="btn-editar-perfil">Editar perfil</a>
 
-	{# {% if posts is not empty %}
-				<h3>Posts</h3>
-				<hr>
-				{% for post in posts %}
-					<div>
-						<a href="{{ path('ctrl_perfilExterno', {'id': post.usuario.idUsuario}) }}">
-							<img src="{{ asset('img/' ~ post.usuario.fotoPerfil) }}" width="25" height="25" style="border-radius:10px;">
-							<strong>{{ post.usuario.nombreUsuario }}</strong>
-						</a>:
-						{{ post.contenido }}
-						<br>
-						{% if post.imagen %}
-							<img src="{{ asset('uploads/posts/' ~ post.imagen) }}" width="150"><br>
-						{% endif %}
-						{% if post.archivo %}
-							<a href="{{ asset('uploads/posts/' ~ post.archivo) }}">{{ post.archivo }}</a><br>
-						{% endif %}
-						<br>
-						<a href="{{ path('ctrl_postDetalle', {'id': post.idPost}) }}">
-							Detalles Post
-						</a>
-						Comentarios:
-						{{ numComentarios[post.idPost] ?? 0 }}
-					</div>
-					<br>
-					Fecha de publicación:
-					{{ post.fechaPublicacion|date('d/m/Y H:i') }}<br>
-					<hr>
-				{% endfor %}
-	
-			{% else %}
-				<p>No has publicado nada aún.</p>
-			{% endif %}
-			<a href="{{ path('ctrl_quierescambiarcontraseñalogueado') }}" style="color: grey;">¿Quieres cambiar tu contraseña?</a>
-			<br><br>
-			<a href="{{ path('ctrl_cerrarcuenta') }}" style="color: red;">Elimina tu cuenta aquí</a>
-			<br>
-		#}
+    <hr class="profile-divider">
+
+    <h3 class="profile-post-title">¿Qué estás pensando?</h3>
+
+</div>
 {% endblock %}

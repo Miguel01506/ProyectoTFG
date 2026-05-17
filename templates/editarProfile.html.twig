@@ -1,46 +1,48 @@
 {% extends "base.html.twig" %}
-
-{% block title %}Editar perfil
+{% block title %}Editar profile
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/editarprofile.css') }}">
 {% endblock %}
 
 {% block body %}
+{% for mensaje in app.flashes('error') %}
+    <div class="flash-error flash-alert" role="alert">{{ mensaje }}</div>
+{% endfor %}
+{% for mensaje in app.flashes('mensaje') %}
+    <div class="flash-mensaje flash-alert" role="alert">{{ mensaje }}</div>
+{% endfor %}
 
-	<h1>Tu perfil</h1>
-	{% if error is defined %}
-		<nav style="color: red;">{{ error }}</nav>
-	{% endif %}
-	<img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto" width="150">
-	<br>
+<div class="profile-edit-wrapper">
+    <h1>Editar perfil</h1>
 
-	<form action="{{ path('ctrl_procesaEditarProfile') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ path('ctrl_procesaEditarProfile') }}" method="POST" enctype="multipart/form-data">
 
-		<label>
-			Foto de perfil:<input type="file" name="fotoPerfil">
-		</label>
-		<br><br>
+        <div class="profile-edit-avatar">
+            <img src="{{ asset('img/' ~ app.user.fotoPerfil) }}" alt="foto">
+            <div class="profile-edit-avatar-info">
+                <label for="fotoInput">Foto de perfil</label>
+                <label class="btn-elegir-foto" for="fotoInput">Elegir imagen</label>
+                <input type="file" name="fotoPerfil" id="fotoInput" style="display:none;">
+            </div>
+        </div>
 
-		<label>
-			Fecha de nacimiento:<input type="date" name="fechaNac">
-		</label>
-		<br><br>
+        <div class="form-field">
+            <label for="fechaNac">Fecha de nacimiento</label>
+            <input type="date" id="fechaNac" name="fechaNac">
+        </div>
 
-		<label>
-			Ciudad:<input type="text" name="ciudad" value="{{ app.user.ciudad }}" placeholder="Madriz, Zevilla, Betih...">
-		</label>
-		<br><br>
+        <div class="form-field">
+            <label for="ciudad">Ciudad</label>
+            <input type="text" id="ciudad" name="ciudad" value="{{ app.user.ciudad }}" placeholder="Madrid, Sevilla...">
+        </div>
 
-		<label>
-			Biografía:<input type="text" name="bio" value="{{ app.user.biografia }}" placeholder="Cuenta tu vida aquí...">
-		</label>
-		<br><br>
+        <div class="form-field">
+            <label for="bio">Biografía</label>
+            <input type="text" id="bio" name="bio" value="{{ app.user.biografia }}" placeholder="Cuenta tu vida aquí...">
+        </div>
 
-		{% for mensaje in app.flashes('mensaje') %}
-			<div style="color: red;">
-				{{ mensaje }}
-			</div>
-		{% endfor %}
-
-		<button type="submit">Guardar cambios</button>
-	</form>
-
+        <button type="submit">Guardar cambios</button>
+    </form>
+</div>
 {% endblock %}

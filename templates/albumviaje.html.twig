@@ -1,37 +1,63 @@
 {% extends "base.html.twig" %}
-{% block title %}Detalles del viaje
+
+{% block title %} Album {% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/album.css') }}">
 {% endblock %}
+
 {% block body %}
-    {% if album %}
-    <h1>Álbum de fotos del viaje: {{ album.viaje.nombre }}</h1>
+{% for mensaje in app.flashes('error') %}
+    <div class="flash-error flash-alert">{{ mensaje }}</div>
+{% endfor %}
+{% for mensaje in app.flashes('mensaje') %}
+    <div class="flash-mensaje flash-alert">{{ mensaje }}</div>
+{% endfor %}
 
-    <h2>Subir nuevo contenido al álbum:</h2>
-    <form action="{{ path('ctrl_subir_contenido', {'id': album.viaje.idViaje}) }}" method="post" enctype="multipart/form-data">
-        <input type="file" name="archivos[]" multiple required>
-        <button type="submit">Subir</button>
-    </form>
+{% if album %}
+<div class="album-wrapper">
 
-    <h2>Contenido del álbum:</h2>
-    <ul>
-        {% for media in contenidoAlbum %}
-            <div style="margin-bottom: 20px; display: inline-block;" >
-                {% if media.tipo == 'foto' %}
-                    <img src="{{ asset('uploads/' ~ media.rutaArchivo) }}" alt="Foto del viaje" style="max-width: 200px;">
-                {% elseif media.tipo == 'video' %}
-                    <video controls style="max-width: 400px;">
-                        <source src="{{ asset('uploads/' ~ media.rutaArchivo) }}" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
-                    </video>
-                {% endif %}
-                <a href="{{ path('ctrl_eliminar_contenido', {'id': media.id}) }}" style="color: red; margin-left: 10px;">x</a>
-            </div>
-        {% else %}
-            <p>No hay contenido en el álbum.</p>
-        {% endfor %}
-    </ul>
+    <h1>{{ album.viaje.nombre }}</h1>
 
-    <a href="{{ path('ctrl_detalles_viaje', {'id': album.viaje.idViaje}) }}">Volver a los detalles del viaje</a>
+    <div class="album-upload-card">
+        <h2>Subir contenido</h2>
+        <form action="{{ path('ctrl_subir_contenido', {'id': album.viaje.idViaje}) }}" method="post" enctype="multipart/form-data">
+            <label class="btn-elegir-archivos-album" for="archivosInput">Elegir archivos</label>
+            <input type="file" id="archivosInput" name="archivos[]" multiple required style="display:none;">
+            <button type="submit" class="btn-subir">Subir</button>
+        </form>
+    </div>
+
+    <h2 class="album-section-title">Contenido del álbum</h2>
+
+    {% if contenidoAlbum is not empty %}
+        <div class="album-media-grid">
+            {% for media in contenidoAlbum %}
+                <div class="album-media-item">
+                    {% if media.tipo == 'foto' %}
+                        <img src="{{ asset('uploads/' ~ media.rutaArchivo) }}" alt="Foto del viaje">
+                    {% elseif media.tipo == 'video' %}
+                        <video muted loop playsinline
+                            onmouseenter="this.play()"
+                            onmouseleave="this.pause(); this.currentTime=0;">
+                            <source src="{{ asset('uploads/' ~ media.rutaArchivo) }}" type="video/mp4">
+                        </video>
+                    {% endif %}
+                    <div class="album-media-actions">
+                        <a href="{{ asset('uploads/' ~ media.rutaArchivo) }}" download class="album-media-btn" title="Descargar">↓</a>
+                        <a href="{{ path('ctrl_eliminar_contenido', {'id': media.id}) }}" class="album-media-btn">✕</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>No se encontró un álbum para este viaje.</p>
+        <p class="album-vacio">No hay contenido en el álbum todavía.</p>
     {% endif %}
+
+    <a href="{{ path('ctrl_detalles_viaje', {'id': album.viaje.idViaje}) }}" class="album-volver">← Volver al viaje</a>
+
+</div>
+{% else %}
+    <p class="album-vacio">No se encontró un álbum para este viaje.</p>
+{% endif %}
 {% endblock %}
