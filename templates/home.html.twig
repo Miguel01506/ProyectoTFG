@@ -31,13 +31,31 @@
 			{% endif %}
 
 			<p>
-				<small>
-					{{ post.comentarios|length }}
+				<small>{{ post.comentarios|length }}
 					comentarios</small>
 				|
 				<small>
-					{{ post.reacciones|length }}
-					reacciones</small>
+					{% set totalLikes = 0 %}
+					{% set totalDislikes = 0 %}
+
+					{% for reac in post.reacciones %}
+						{% if reac.tipo == 'like' %}
+							{% set totalLikes = totalLikes + 1 %}
+						{% elseif reac.tipo == 'dislike' %}
+							{% set totalDislikes = totalDislikes + 1 %}
+						{% endif %}
+					{% endfor %}
+
+					<div>
+						<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}">
+							👍 {{ totalLikes }}
+						</a>
+						&nbsp;&nbsp;
+						<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}">
+							👎 {{ totalDislikes }}
+						</a>
+					</div>
+				</small>
 			</p>
 		</div>
 	{% else %}
