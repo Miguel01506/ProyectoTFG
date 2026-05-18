@@ -51,15 +51,15 @@
 			{% endif %}
 		{% endfor %}
 
-		<div>
-			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}">
-				👍
-				{{ totalLikes }}
+		<div class="bloque-reacciones">
+			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}" class="enlace-reaccion">
+				👍 Like (<span class="likes-count">{{ totalLikes }}</span>)
 			</a>
-			&nbsp;&nbsp;
-			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}">
-				👎
-				{{ totalDislikes }}
+
+			&nbsp;&nbsp;&nbsp;
+
+			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}" class="enlace-reaccion">
+				👎 Dislike (<span class="dislikes-count">{{ totalDislikes }}</span>)
 			</a>
 		</div>
 	</p>
@@ -75,4 +75,7 @@
 	<p>{{ comentario.texto }}</p>
 	<small>{{ comentario.fechaComentario|date('d/m/Y H:i') }}:</small>
 </div>{% else %}
-<p>No hay comentarios en este post. Comenta el primero</p>{% endfor %}{% endblock %}
+<p>No hay comentarios en este post. Comenta el primero</p>
+{% endfor %}
+<script src="{{ asset('controllers/reaccionesJson.js') }}" defer></script>
+{% endblock %}

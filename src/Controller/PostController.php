@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -178,9 +179,18 @@ class PostController extends AbstractController
 
         $em->flush();
 
+        $totalLikes = $em->getRepository(Reaccion::class)->count(['post' => $post, 'tipo' => 'like']);
+        $totalDislikes = $em->getRepository(Reaccion::class)->count(['post' => $post, 'tipo' => 'dislike']);
+
         // esto lo que hace es obtener el referer, que es la página desde donde se envia
         // porque como hay postDetalle y feed lo pongo así, para que dirija de donde venga y no tener
         // que hacer dos controladores o algo
-        return $this->redirect($req->headers->get('referer'));
+        // return $this->redirect($req->headers->get('referer')); lo comento que voy a intentar hacerlo con json
+
+        return new JsonResponse([
+            'success' => true,
+            'totalLikes' => $totalLikes,
+            'totalDislikes' => $totalDislikes,
+        ]);
     }
 }
