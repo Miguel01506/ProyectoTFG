@@ -1,46 +1,82 @@
 {% extends "base.html.twig" %}
-{% block title %}Feed Aura
+
+{% block title %}Feed Aura{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
 {% endblock %}
+
 {% block body %}
-	<h1>Feed Aura</h1>
+    <div class="feed-container">
+        
+        <h1 style="color: var(--color-verde-oscuro, #546B41); font-family: var(--fuente-titulos, serif); margin-bottom: 30px; text-align: center;">FEED AURA</h1>
 
-	{%for post in posts %}
-		<div>
-			<p>
-				<b>{{ post.autor.nombreUsuario }}</b>
-				ha publicado en
-				<a href="{{ path('ctrl_detalles_viaje', {'id': post.viaje.idViaje}) }}">
-					<b>{{ post.viaje.nombre }}</b>
-				</a>
+        {% if posts is not empty %}
+            <div class="feed-posts-list">
+                {% for post in posts %}
+                    <div class="post-card">
+                        
+                        <p class="post-header">
+                            <b>{{ post.autor.nombreUsuario }}</b> ha publicado en 
+                            <a href="{{ path('ctrl_detalles_viaje', {'id': post.viaje.idViaje}) }}">
+                                <b>{{ post.viaje.nombre }}</b>
+                            </a><br>
+                            <small class="post-fecha">{{ post.fechaPublicacion|date('d/m/Y H:i') }}</small>
+                        </p>
 
-				{{ post.fechaPublicacion|date('d/m/Y H:i') }}
-			</p>
+                        <a href="{{ path('ctrl_postDetalle', {'id': post.id}) }}" class="post-body-link">
+                            <p class="post-texto">{{ post.texto }}</p>
+                        </a>
 
-			<a href="{{ path('ctrl_postDetalle', {'id': post.id}) }}">
-				<p>{{ post.texto }}</p>
-			</a>
+                        {% if post.postMedia is not empty %}
+                            <div class="post-media-carousel">
+                                
+                                {% if post.postMedia|length > 1 %}
+                                    <button class="btn-media-carrusel btn-media-prev">&#10094;</button>
+                                {% endif %}
 
-			{% if post.postMedia is not empty %}
-				<a href="{{ path('ctrl_postDetalle', {'id': post.id}) }}">
-					<small>
-						Contiene
-						{{ post.postMedia|length }}
-						archivos
-					</small>
-				</a>
-			{% endif %}
+                                <div class="media-track">
+                                    {% for pm in post.postMedia %}
+                                        <div class="media-slide">
+                                            {% if pm.media.tipo in ['jpg', 'jpeg', 'png', 'gif', 'webp'] %}
+                                                <img src="{{ asset('posts/' ~ pm.media.rutaArchivo) }}" alt="Imagen" class="media-item">
+                                            {% elseif pm.media.tipo in ['mp4', 'mov', 'avi'] %}
+                                                <video controls class="media-item">
+                                                    <source src="{{ asset('posts/' ~ pm.media.rutaArchivo) }}" type="video/{{ pm.media.tipo == 'mov' ? 'quicktime' : pm.media.tipo }}">
+                                                </video>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
 
-			<p>
-				<small>
-					{{ post.comentarios|length }}
-					comentarios</small>
-				|
-				<small>
-					{{ post.reacciones|length }}
-					reacciones</small>
-			</p>
-		</div>
-	{% else %}
-		<p>No hay ninguna publicación todavía.</p>
-	{% endfor %}
+                                {% if post.postMedia|length > 1 %}
+                                    <button class="btn-media-carrusel btn-media-next">&#10095;</button>
+                                    
+                                    <div class="media-dots">
+                                        {% for pm in post.postMedia %}
+                                            <span class="media-dot" data-slide-index="{{ loop.index0 }}"></span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+
+                        <div class="post-interacciones">
+                            <p>
+                                <small>{{ post.comentarios|length }} comentarios</small> 
+                                <small>{{ post.reacciones|length }} reacciones</small>
+                            </p>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; color: #888;">No hay ninguna publicación todavía.</p>
+        {% endif %}
+
+    </div>
+
+    <script src="{{ asset('js/posts.js') }}"></script>
 {% endblock %}

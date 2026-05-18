@@ -68,7 +68,7 @@ body {
 .sidebar-links a:hover {
     background-color: var(--color-verde-claro);
     color: var(--blanco);
-    padding-left: 20px;
+
 }
 
 .sidebar-divider {
