@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Actividades;
+use App\Entity\Notificacion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -268,13 +269,26 @@ class ViajesController extends AbstractController
             'usuario' => $usuario
         ]);
 
+        $nombreViaje = $viaje->getNombre();
+
+        $listaParticipantes = '';
+        foreach ($viaje->getParticipantes() as $p) {
+            $listaParticipantes .= $p->getUsuario()->getNombreUsuario() . ', ';
+        }
+        $listaParticipantes = rtrim($listaParticipantes, ', ');
+
         if (!$existe) {
-            $participante = new Participante();
-            $participante->setViaje($viaje);
-            $participante->setUsuario($usuario);
-            $em->persist($participante);
+
+            $notificacion = new Notificacion();
+            $notificacion->setUsuario($usuario);
+            $notificacion->setViaje($viaje);
+            $notificacion->setTitulo("Solicitud para unirse al viaje");
+            $notificacion->setContenido('Se ha solicitado que te unas al viaje: ' . $nombreViaje . ' de ' . $listaParticipantes);
+            $notificacion->setFecha(new \DateTime());
+
+            $em->persist($notificacion);
+
             $em->flush();
-            $this->addFlash('mensaje', '¡' . $nombreUsuario . ' añadido!');
         } else {
             $this->addFlash('error', 'Ya está en el viaje.');
         }
