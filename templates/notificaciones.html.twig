@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+{% block title %}Notificaciones{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/notificaciones.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="viaje-wrapper">
+
+    <div class="viaje-hero">
+        <div class="viaje-hero-content">
+            <h2>Notificaciones</h2>
+            <p>{{ notificaciones|length }} notificación{{ notificaciones|length != 1 ? 'es' : '' }}</p>
+        </div>
+    </div>
+
+    <div class="notif-lista">
+        {% for notif in notificaciones %}
+            <div class="notif-item {{ notif.leido ? 'leida' : 'no-leida' }}" id="notif-{{ notif.id }}">
+                <div class="notif-body">
+                    <strong class="notif-titulo">{{ notif.titulo }}</strong>
+                    <p class="notif-contenido">{{ notif.contenido }}</p>
+                    <small class="notif-fecha">{{ notif.fecha|date('d/m/Y H:i') }}</small>
+                </div>
+
+                {% if notif.titulo == 'Solicitud para unirse al viaje' and not notif.leido %}
+                    <div class="notif-acciones">
+                        <a href="{{ path('ctrl_responder_notificacion', {'id': notif.id, 'idViaje': notif.viaje.idViaje, 'accion': 'aceptar'}) }}" class="btn-aceptar">Aceptar</a>
+                        
+                        <a href="{{ path('ctrl_responder_notificacion', {'id': notif.id, 'idViaje': notif.viaje.idViaje, 'accion': 'rechazar'}) }}" class="btn-rechazar">Rechazar</a>                     
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="notif-vacia">
+                <p>No tienes notificaciones.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
