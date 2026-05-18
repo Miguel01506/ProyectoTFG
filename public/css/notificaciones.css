@@ -1,0 +1,174 @@
+/* Contenedor de la lista - Mantiene el ancho y centrado del panel */
+.notif-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 1.5rem 0;
+    max-width: 1000px; /* Alineado con el tamaño de tus bloques principales */
+    margin: 0 auto;
+    font-family: system-ui, -apple-system, sans-serif; /* O la fuente que uses en tu app */
+}
+
+/* Tarjeta de notificación base con el diseño limpio de tu app */
+.notif-item {
+    background: #ffffff;
+    border: 1px solid #f2efea; /* Tono suave crema para los bordes */
+    border-radius: 16px; /* Bordes redondeados idénticos a tus tarjetas de viajes */
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); /* Sombra muy sutil */
+    transition: all 0.25s ease;
+}
+
+/* Efecto hover elegante */
+.notif-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(77, 98, 57, 0.05); /* Destello sutil con tu verde oliva */
+}
+
+/* Estado: NO LEÍDA (Destaca usando el verde característico de tu logo/botones) */
+.notif-item.no-leida {
+    border-left: 5px solid #4d6239; /* El verde oliva de tu botón 'Registrar Viaje' */
+    background: linear-gradient(90deg, rgba(77, 98, 57, 0.02) 0%, #ffffff 100%);
+}
+
+/* Estado: LEÍDA (Se mimetiza con el fondo crema de la web) */
+.notif-item.leida {
+    background: #f7f5f0; /* El color de fondo de tu sitio web */
+    border-color: transparent;
+}
+.notif-item.leida .notif-titulo {
+    color: #7a8274; /* Verde grisáceo apagado */
+}
+.notif-item.leida .notif-contenido {
+    color: #8a9085;
+}
+
+/* Bloque de texto interno */
+.notif-body {
+    flex-grow: 1;
+}
+
+/* Título de la notificación - Usa un estilo similar a tus títulos principales */
+.notif-titulo {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2b3a1a; /* Verde muy oscuro casi negro */
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+}
+
+.notif-contenido {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555e4e; /* Texto oscuro pero suave */
+    margin: 0 0 8px;
+}
+
+.notif-fecha {
+    font-size: 12px;
+    font-weight: 500;
+    color: #9aa194;
+    display: inline-block;
+}
+
+/* Mensaje de resultado tras pulsar Aceptar/Rechazar */
+.notif-resultado {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: #f2efea;
+    color: #4d6239;
+}
+
+/* Contenedor de acciones (Botones) */
+.notif-acciones {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Botones Base */
+.btn-aceptar,
+.btn-rechazar {
+    padding: 10px 20px;
+    border-radius: 10px; /* Bordes ligeramente más redondeados acorde a tu UI */
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase; /* Clona el estilo de 'REGISTRAR VIAJE' */
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+}
+
+/* Botón Aceptar - Idéntico al de 'REGISTRAR VIAJE' de tu captura */
+.btn-aceptar {
+    background: #4d6239; /* Verde Oliva */
+    color: #ffffff;
+}
+.btn-aceptar:hover {
+    background: #3b4b2c; /* Un tono más oscuro al pasar el cursor */
+    transform: scale(1.02);
+}
+.btn-aceptar:active {
+    transform: scale(0.98);
+}
+
+/* Botón Rechazar - Sigue la estética de tus inputs del formulario */
+.btn-rechazar {
+    background: #fdfcf7; /* Fondo del input */
+    border-color: #e6e1d6;
+    color: #7a8274;
+}
+.btn-rechazar:hover {
+    background: #f2efea;
+    border-color: #c6bfae;
+    color: #2b3a1a;
+}
+.btn-rechazar:active {
+    background: #e6e1d6;
+}
+
+/* Estado de lista vacía - Estilo caja de formulario vacía */
+.notif-vacia {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #ffffff;
+    border: 2px dashed #e6e1d6;
+    border-radius: 16px;
+    color: #8a9085;
+}
+.notif-vacia p {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* --- Adaptabilidad para Móviles (Responsive) --- */
+@media (max-width: 600px) {
+    .notif-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+    }
+
+    .notif-acciones {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+    
+    .btn-aceptar, .btn-rechazar {
+        flex: 1;
+        text-align: center;
+        padding: 12px; /* Más cómodo para pulsar con el dedo */
+    }
+}

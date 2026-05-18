@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,6 +14,8 @@ use App\Entity\PostMedia;
 use App\Entity\Post;
 use App\Entity\Viaje;
 use App\Entity\Comentario;
+use App\Entity\Usuario;
+use App\Entity\Reaccion;
 use DateTime;
 
 class PostController extends AbstractController
@@ -135,5 +138,59 @@ class PostController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('ctrl_postDetalle', ['id' => $id]);
+    }
+
+    #[Route('/post/{id}/reaccionar/{tipo}', name: 'ctrl_reaccionar', methods: ['GET'])]
+    public function reaccionar(int $id, string $tipo, EntityManagerInterface $em, Request $req): Response
+    {
+        if (!in_array($tipo, ['like', 'dislike'])) {
+            return $this->redirect($req->headers->get('referer'));
+        }
+
+        $post = $em->getRepository(Post::class)->find($id);
+        // no pongo mensaje de error porque considero que a veces no hace falta, si no existe el post 
+        // será porque el usuario habrá metido el ID mal en la URL y punto
+        if (!$post) {
+            return $this->redirectToRoute('ctrl_home');
+        }
+
+        $usuario = $this->getUser();
+
+        $reaccion = $em->getRepository(Reaccion::class)->findOneBy(['post' => $post, 'usuario' => $usuario]);
+
+        if (!$reaccion) {
+            $reaccion = new Reaccion();
+            $reaccion->setPost($post);
+            $reaccion->setUsuario($usuario);
+            $reaccion->setTipo($tipo);
+            $reaccion->setFechaReaccion(new DateTime());
+
+            $em->persist($reaccion);
+        } else {
+            if ($reaccion->getTipo() == $tipo) {
+                $em->remove($reaccion);             
+            } else {
+                $reaccion->setTipo($tipo);
+                $reaccion->setFechaReaccion(new DateTime());
+
+                $em->persist($reaccion);
+            }
+        }
+
+        $em->flush();
+
+        $totalLikes = $em->getRepository(Reaccion::class)->count(['post' => $post, 'tipo' => 'like']);
+        $totalDislikes = $em->getRepository(Reaccion::class)->count(['post' => $post, 'tipo' => 'dislike']);
+
+        // esto lo que hace es obtener el referer, que es la página desde donde se envia
+        // porque como hay postDetalle y feed lo pongo así, para que dirija de donde venga y no tener
+        // que hacer dos controladores o algo
+        // return $this->redirect($req->headers->get('referer')); lo comento que voy a intentar hacerlo con json
+
+        return new JsonResponse([
+            'success' => true,
+            'totalLikes' => $totalLikes,
+            'totalDislikes' => $totalDislikes,
+        ]);
     }
 }

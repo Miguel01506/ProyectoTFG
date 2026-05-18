@@ -40,17 +40,35 @@
 	{% endif %}
 
 	<p>
-		{{ post.reacciones|length }}reacciones
+		{% set totalLikes = 0 %}
+		{% set totalDislikes = 0 %}
+
+		{% for reac in post.reacciones %}
+			{% if reac.tipo == 'like' %}
+				{% set totalLikes = totalLikes + 1 %}
+			{% elseif reac.tipo == 'dislike' %}
+				{% set totalDislikes = totalDislikes + 1 %}
+			{% endif %}
+		{% endfor %}
+
+		<div class="bloque-reacciones">
+			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}" class="enlace-reaccion">
+				<span class="likes-count">{{ totalLikes }}</span>
+				👍
+			</a>
+
+			&nbsp;&nbsp;&nbsp;
+
+			<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}" class="enlace-reaccion">
+				<span class="dislikes-count">{{ totalDislikes }}</span>
+				👎
+			</a>
+		</div>
 	</p>
-</small></p><h2>Comentarios ({{ post.comentarios|length }})</h2><br>
-
-<form action="{{ path('ctrl_addComentario', {'id': post.id}) }}" method="POST">
-    <textarea name="texto_comentario" required placeholder="Comenta qué piensas"></textarea>
-    <br>
-    <button type="submit">Comentar</button>
-</form><br>
-
-    {% for comentario in post.comentarios %}
+</small></p><h2>Comentarios ({{ post.comentarios|length }})</h2><br><form action="{{ path('ctrl_addComentario', {'id': post.id}) }}" method="POST">
+<textarea name="texto_comentario" required placeholder="Comenta qué piensas"></textarea>
+<br>
+<button type="submit">Comentar</button></form><br>{% for comentario in post.comentarios %}
 <div>
 
 	<b>{{ comentario.usuario.nombreUsuario }}</b>
@@ -59,4 +77,4 @@
 	<p>{{ comentario.texto }}</p>
 	<small>{{ comentario.fechaComentario|date('d/m/Y H:i') }}:</small>
 </div>{% else %}
-<p>No hay comentarios en este post. Comenta el primero</p>{% endfor %}{% endblock %}
+<p>No hay comentarios en este post. Comenta el primero</p>{% endfor %}<script src="{{ asset('controllers/reaccionesJson.js') }}" defer></script>{% endblock %}
