@@ -28,6 +28,7 @@
                             <p class="post-texto">{{ post.texto }}</p>
                         </a>
 
+                        {# CARRUSEL MULTIMEDIA DEL POST #}
                         {% if post.postMedia is not empty %}
                             <div class="post-media-carousel">
                                 
@@ -49,7 +50,6 @@
                                     {% endfor %}
                                 </div>
 
-<<<<<<< HEAD
                                 {% if post.postMedia|length > 1 %}
                                     <button class="btn-media-carrusel btn-media-next">&#10095;</button>
                                     
@@ -64,10 +64,30 @@
                         {% endif %}
 
                         <div class="post-interacciones">
-                            <p>
-                                <small>{{ post.comentarios|length }} comentarios</small> 
-                                <small>{{ post.reacciones|length }} reacciones</small>
-                            </p>
+                            {% set totalLikes = 0 %}
+                            {% set totalDislikes = 0 %}
+
+                            {% for reac in post.reacciones %}
+                                {% if reac.tipo == 'like' %}
+                                    {% set totalLikes = totalLikes + 1 %}
+                                {% elseif reac.tipo == 'dislike' %}
+                                    {% set totalDislikes = totalDislikes + 1 %}
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="bloque-reacciones" style="display: flex; align-items: center; gap: 20px; margin-top: 5px;">
+                                <a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}" class="enlace-reaccion" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px;">
+                                    <span class="likes-count" style="font-weight: 600;">{{ totalLikes }}</span> 👍
+                                </a>
+
+                                <a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}" class="enlace-reaccion" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px;">
+                                    <span class="dislikes-count" style="font-weight: 600;">{{ totalDislikes }}</span> 👎
+                                </a>
+
+                                <span style="margin-left: auto; font-size: 14px; color: var(--color-verde-oscuro, #546B41);">
+                                    <small>{{ post.comentarios|length }} comentarios</small>
+                                </span>
+                            </div>
                         </div>
 
                     </div>
@@ -80,40 +100,5 @@
     </div>
 
     <script src="{{ asset('js/posts.js') }}"></script>
+    <script src="{{ asset('controllers/reaccionesJson.js') }}" defer></script>
 {% endblock %}
-=======
-			<p>
-				<small>{{ post.comentarios|length }}
-					comentarios</small>
-				|
-				{% set totalLikes = 0 %}
-				{% set totalDislikes = 0 %}
-
-				{% for reac in post.reacciones %}
-					{% if reac.tipo == 'like' %}
-						{% set totalLikes = totalLikes + 1 %}
-					{% elseif reac.tipo == 'dislike' %}
-						{% set totalDislikes = totalDislikes + 1 %}
-					{% endif %}
-				{% endfor %}
-
-				<div class="bloque-reacciones">
-					<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'like'}) }}" class="enlace-reaccion">
-						<span class="likes-count">{{ totalLikes }}</span> 👍
-					</a>
-
-					&nbsp;&nbsp;&nbsp;
-
-					<a href="{{ path('ctrl_reaccionar', {'id': post.id, 'tipo': 'dislike'}) }}" class="enlace-reaccion">
-						<span class="dislikes-count">{{ totalDislikes }}</span> 👎
-					</a>
-				</div>
-
-			</p>
-		</div>
-	{% else %}
-		<p>No hay ninguna publicación todavía.</p>
-	{% endfor %}
-	<script src="{{ asset('controllers/reaccionesJson.js') }}" defer></script>
-{% endblock %}
->>>>>>> 2349ba669792592926ffcf997f56c2f25982a8a9
